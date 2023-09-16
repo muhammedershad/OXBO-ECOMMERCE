@@ -1,0 +1,194 @@
+<%- include('./partials/header.ejs') %>
+
+<!-- <div class="container">
+    <div class="row">
+      <div class="col-3">
+        <ul class="list-group">
+          <li class="list-group-item">My Profile</li>
+          <li class="list-group-item">My Info</li>
+          <li class="list-group-item">My Orders</li>
+          <li class="list-group-item">Wishlist</li>
+          <li class="list-group-item">Logout</li>
+        </ul>
+      </div>
+      
+      <div class="col-9">
+        <h2>User Information</h2>
+        <p>Name: John Doe</p> 
+        <p>Email: john@example.com</p>
+        <p>Address: 123 Main St, Anytown, USA</p>
+        
+        <h3>Recent Orders</h3>
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Order #</th>
+              <th>Date</th>
+              <th>Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>1234</td>
+              <td>1/1/2022</td> 
+              <td>$50</td>
+            </tr>
+            <tr>
+              <td>1235</td>
+              <td>1/5/2022</td>
+              <td>$25</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div> -->
+
+<div class="container mt-4">
+  <div class="row">
+    <div class="col-md-3">
+      <div class="list-group">
+        <!-- <a href="#" class="list-group-item list-group-item-action active"
+          >User Menu</a
+        > -->
+        <!-- <a href="#" class="list-group-item list-group-item-action"
+          >User Profile</a
+        > -->
+        <a href="/account" class="list-group-item list-group-item-action">My Info</a>
+        <a href="/orderList" class="list-group-item list-group-item-action">My Orders</a>
+        <a href="#" class="list-group-item list-group-item-action">Wishlist</a>
+        <a href="#" onclick="logout()" class="list-group-item list-group-item-action">Logout</a>
+      </div>
+    </div>
+    <div class="col-md-7">
+        <div class="card-body p-3 border rounded mb-3">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+              <p class="lead fw-normal mb-0" style="color: #2a2a2a;">All Oders</p>
+              <!-- <p class="small text-muted mb-0">Receipt Voucher : 1KAU9-84UIL</p> -->
+            </div>
+           
+            <% orders.forEach(order => { %>
+              <a href="/orderDetails?orderId=<%= order._id %>">
+               <div class="card shadow-0 border mb-4">
+                  <div class="card-body row">
+                    <div class="col-8">
+                      <% order.products.forEach(product => { %>
+                        <div class="row mb-1">
+                            <div class="col-md-3">
+                              <img style="width: 70px; height: 80px;" src="/<%= product.product.image[0] %>"
+                                class="img-fluid" alt="Phone">
+                            </div>
+                            <div class="col-md-3 text-center d-flex justify-content-center align-items-center">
+                              <p class="text-muted mb-0"><%= product.product.title %></p>
+                            </div>
+                            <div class="col-md-3 text-center d-flex justify-content-center align-items-center">
+                              <p class="text-muted mb-0 small">Size: <%= product.size %></p>
+                            </div>
+                            <!-- <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
+                              <p class="text-muted mb-0 small">Capacity: 64GB</p>
+                            </div> -->
+                            <div class="col-md-3 text-center d-flex justify-content-center align-items-center">
+                              <p class="text-muted mb-0 small">Qty: <%= product.quantity %></p>
+                            </div>
+                            <!-- <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
+                              <p class="text-muted mb-0 small">Price per unit: <%= product.product.MRP %></p>
+                            </div> -->
+                          </div>
+                      <% }) %>
+                    </div>
+                    <div class="col-4 d-flex align-items-center">
+                      <div class="text-center  justify-content-center align-items-center">
+                        <p class="text-muted mb-2 small">
+                          <% if (order.orderStatus === 'Delivered') { %>
+                              Delivered on: <%= new Date(order.orderDate.getTime() + 7 * 24 * 60 * 60 * 1000).toLocaleDateString() %>
+                          <% } else { %>
+                              Delivery date: <%= new Date(order.orderDate.getTime() + 7 * 24 * 60 * 60 * 1000).toLocaleDateString() %>
+                          <% } %>
+                        </p>
+                        <p class="text-muted mb-0 small">Total Amount: ₹<%= order.total %>.00</p>
+                      </div>
+                    </div>
+                    <hr class="mb-4" style="background-color: #e0e0e0; opacity: 1;">
+                    <div class="row d-flex align-items-center">
+                      <div class="col-md-2">
+                        <p class="text-muted mb-0 small">Track Order</p>
+                      </div>
+                      <div class="col-md-10">
+                        <div class="progress" style="height: 6px; border-radius: 16px;">
+                          <div class="progress-bar" role="progressbar"
+                            <% if (order.orderStatus === 'Order Confirmed') { %> style="width:33%; background-color:red; border-radius: 16px;" <% } else if (order.orderStatus === 'Shipping') { %> style="width:66%; border-radius: 16px; " <% } else if (order.orderStatus === 'Delivered') { %> style="width:100%; border-radius: 16px; " <% } %>
+                            aria-valuenow="65"
+                            aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                        <div class="d-flex justify-content-between mb-1">
+                          <p class="text-muted mt-1 mb-0 small ms-xl-5">Order Confirmed</p>
+                          <p class="text-muted mt-1 mb-0 small ms-xl-5">Shipped</p>
+                          <p class="text-muted mt-1 mb-0 small ms-xl-5">Delivered</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </a>
+             <% }) %>
+           
+            <!-- <div class="card shadow-0 border mb-4">
+              <div class="card-body">
+                <div class="row">
+                  <div class="col-md-2">
+                    <img src="https://mdbcdn.b-cdn.net/img/Photos/Horizontal/E-commerce/Products/1.webp"
+                      class="img-fluid" alt="Phone">
+                  </div>
+                  <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
+                    <p class="text-muted mb-0"><%=  %></p>
+                  </div>
+                  <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
+                    <p class="text-muted mb-0 small">Pink rose</p>
+                  </div>
+                  <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
+                    <p class="text-muted mb-0 small">Capacity: 32GB</p>
+                  </div>
+                  <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
+                    <p class="text-muted mb-0 small">Qty: 1</p>
+                  </div>
+                  <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
+                    <p class="text-muted mb-0 small">$399</p>
+                  </div>
+                </div>
+                <hr class="mb-4" style="background-color: #e0e0e0; opacity: 1;">
+                <div class="row d-flex align-items-center">
+                  <div class="col-md-2">
+                    <p class="text-muted mb-0 small">Track Order</p>
+                  </div>
+                  <div class="col-md-10">
+                    <div class="progress" style="height: 6px; border-radius: 16px;">
+                      <div class="progress-bar" role="progressbar"
+                        style="width: 20%; border-radius: 16px; background-color: #a8729a;" aria-valuenow="20"
+                        aria-valuemin="0" aria-valuemax="100"></div>
+                    </div>
+                    <div class="d-flex justify-content-around mb-1">
+                      <p class="text-muted mt-1 mb-0 small ms-xl-5">Out for delivary</p>
+                      <p class="text-muted mt-1 mb-0 small ms-xl-5">Delivered</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div> -->
+      
+    </div>
+    </div>
+  </div>
+</div>
+
+
+
+<%- include('./partials/footer.ejs') %>
+<script>
+  function logout(){
+    fetch(`/logout`,{
+        method:"POST",
+    }).then(()=>{
+        window.location.reload()
+    })
+  }
+</script>

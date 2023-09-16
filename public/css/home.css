@@ -1,0 +1,51 @@
+.firstPoster {
+    background-image: url('/images/poster1.webp');
+    background-size: cover;
+    height: 800px; /* Set an initial height for larger screens */
+
+    /* Add media queries for different screen sizes */
+    @media (max-width: 768px) {
+        height: 600px; /* Adjust height for medium-sized screens */
+    }
+
+    @media (max-width: 576px) {
+        height: 400px; /* Adjust height for smaller screens */
+    }
+}
+
+.rounded-card {
+    border-radius: 8px; /* Adjust the border radius as needed */
+    overflow: hidden;
+    position: relative; /* Required for absolute positioning */
+}
+.card-img-overlay {
+    background: rgba(0, 0, 0, 0.5); /* Semi-transparent background for text */
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 1rem;
+}
+.card-title1 {
+    color: white; /* Text color */
+    text-align: center; /* Center the text horizontally */
+    position: absolute;
+    bottom: 0; /* Position at the bottom */
+    left: 0;
+    right: 0;
+    margin-bottom: 10px; /* Add some spacing from the overlay */
+}
+
+.center-div {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 10vh; /* Adjust the height as needed */
+}
+.title {
+    font-size: 24px; /* Adjust the font size as needed */
+}
+
+body{
+    background-color: rgba(226, 225, 225, 0.575);
+}

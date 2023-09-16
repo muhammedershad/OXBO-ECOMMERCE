@@ -1,0 +1,138 @@
+<%- include('./partials/header.ejs') %>
+
+<div class="container-fluid my-2">
+    <div class="row mx-2">
+        <!-- Sidebar with filter categories -->
+        <div class="col-md-2 " style="position: sticky; top: 70px; height: 500px;">
+            <h5>Categories</h5>
+            <ul class="list-group mb-3">
+                <% categorylist.forEach(category => { %>
+                    <li class="list-group-item" onclick="filterByCategory('<%= category.category %>')"><%= category.category %></li>
+                <% }); %>
+            </ul>
+
+            <h5>Filter By Price</h5>
+            <ul class="list-group">
+                <li class="list-group-item" onclick="filterByPrice(0,999)">₹0.00 - ₹999.00</li>
+                <li class="list-group-item" onclick="filterByPrice(1000,1999)">₹1000.00 - ₹1999.00</li>
+                <li class="list-group-item" onclick="filterByPrice(2000,4999)">₹2000.00 - ₹4999.00</li>
+                <li class="list-group-item" onclick="filterByPrice(5000,9999)">₹5000.00 - ₹9999.00</li>
+                <li class="list-group-item" onclick="filterByPrice(10000,100000)">₹10000.00 - More</li>
+
+            </ul>
+            <!-- <div class="mt-4">
+                <h4>Price Range</h4> -->
+                <!-- Add a range slider here -->
+            <!-- </div> -->
+            <!-- <div class="mt-4 ">
+                <h5>Sizes</h5>
+                <div class="row px-2">
+                    <div class="form-check col-3">
+                        <input class="form-check-input" type="checkbox" value="" id="size1">
+                        <label class="form-check-label" for="size1">
+                            S
+                        </label>
+                    </div>
+                    <div class="form-check col-3">
+                        <input class="form-check-input" type="checkbox" value="" id="size1">
+                        <label class="form-check-label" for="size1">
+                            M
+                        </label>
+                    </div>
+                    <div class="form-check col-3">
+                        <input class="form-check-input" type="checkbox" value="" id="size1">
+                        <label class="form-check-label" for="size1">
+                            L
+                        </label>
+                    </div>
+                </div>
+                <div class="row px-2">
+                    <div class="form-check col-3">
+                        <input class="form-check-input" type="checkbox" value="" id="size1">
+                        <label class="form-check-label" for="size1">
+                            XL
+                        </label>
+                    </div>
+                    <div class="form-check col-3">
+                        <input class="form-check-input" type="checkbox" value="" id="size1">
+                        <label class="form-check-label" for="size1">
+                            XXL
+                        </label>
+                    </div>
+                    <div class="form-check col-3">
+                        <input class="form-check-input" type="checkbox" value="" id="size1">
+                        <label class="form-check-label" for="size1">
+                            XXL
+                        </label>
+                    </div>
+                </div>
+            </div> -->
+        </div>
+        
+        <!-- Product cards section -->
+        <div class="col-md-10" style="position: relative; overflow: auto;">
+
+            <input type="hidden" name="category" id="categoryInput" value="<%= category %>">
+            <input type="hidden" name="gender" id="genderInput" value="<%= gender %>">
+            <input type="hidden" name="search" id="encodedSearchInput" value="<%= encodedSearch %>">
+            <input type="hidden" name="price"  id="minInput" value="<%= min %>">
+            <input type="hidden" name="price" id="maxInput" value="<%= max %>">
+
+
+            <div class="d-flex justify-content-end mb-2">
+                <select class="form-select" id="sortSelect">
+                    <option selected>Sort By</option>
+                    <option value="price"><button onclick="sortByPrice('<%= 1 %>','<%= category %>')">Price: Low to High</button></option>
+                    <option value="name">Price: High to Low</option>
+                </select>
+            </div>
+            <% if (productlist.length === 0) { %>
+                <div class="d-flex justify-content-center">
+                    <h4>NO MATCHING ITEMS</h4>
+                </div>
+                <div class="d-flex justify-content-center">
+                    <h6>Your search did not match any results.</h6>
+                </div>
+                <div class="d-flex justify-content-center">
+                    <h6>Please check the spelling or try again with a less specific term</h6>
+                </div>
+            <% } %>
+            
+            <div class="row products">
+                <% productlist.forEach(product => { %>
+                    <div class="card col-md-3 mx-2 mb-2" style="width: 18rem;" data-category="<%= product.category %>" data-sizes="<%=  %>">
+                        <a href="/product?productId=<%= product._id %>">
+                            <img src="/<%= product.image[0] %>" class="card-img-top" alt="...">
+                            <div class="card-body">
+                                <h5><%= product.title %></h5>
+                                <h6>Rs.<%= product.MRP %></h6>
+                            </div>
+                        </a>
+                    </div>
+                <% }); %>
+            </div>
+            <div class="d-flex justify-content-center">
+                <nav aria-label="Page navigation">
+                    <ul class="pagination">
+                        <% if (currentPage > 1) { %>
+                            <li class="page-item"><a class="page-link" href="/products?page=<%= currentPage - 1 %>&gender=<%= gender %>&category=<%= category %>&number=<%= number %>&encodedSearch=<%= encodedSearch %>&min<%= min %>&max=<%= max %>">Previous</a></li>
+                        <% } %>
+                        
+                        <% for (let i = 1; i <= totalPages; i++) { %>
+                            <li class="page-item <%= i === currentPage ? 'active' : '' %>">
+                                <a class="page-link" href="/products?page=<%= i %>&gender=<%= gender %>&category=<%= category %>&number=<%= number %>&encodedSearch=<%= encodedSearch %>&min<%= min %>&max=<%= max %>"><%= i %></a>
+                            </li>
+                        <% } %>
+    
+                        <% if (currentPage < totalPages) { %>
+                            <li class="page-item"><a class="page-link" href="/products?page=<%= currentPage + 1 %>&gender=<%= gender %>&category=<%= category %>&number=<%= number %>&encodedSearch=<%= encodedSearch %>&min<%= min %>&max=<%= max %>">Next</a></li>
+                        <% } %>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </div>
+</div>
+
+<%- include('./partials/footer.ejs') %>
+<script src="/javascripts/productFiltering.js"></script>

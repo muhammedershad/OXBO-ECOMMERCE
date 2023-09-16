@@ -1,0 +1,46 @@
+<%- include('./partials/header.ejs') %>
+
+<div class="container-fluid">
+    <div class="row min-vh-100">
+        <div class="col-md-6 m-0 p-0 d-none d-md-block">
+            <!-- Image section (visible on medium and larger screens) -->
+            <img src="/images/loginPageImage.jpeg" alt="Background Image" class="w-100 h-100 object-fit-cover">
+        </div>
+        <div class="col-md-6 col-12 d-flex align-items-center justify-content-center">
+            <!-- OTP verification form section -->
+            <!-- <form class="p-4" action="/verifyOTP" method="post">
+                <h2 class="mb-4">OTP Verification</h2>
+                <div class="mb-3">
+                    <label for="otp" class="form-label">Enter OTP</label>
+                    <input type="text" class="form-control" name="enteredOTP" id="otp" placeholder="Enter the OTP">
+                </div>
+                <button type="submit" class="btn btn-primary w-100">Verify OTP</button>
+            </form> -->
+            <form class="m-5 p-5 w-100" action="/verifyOTP" method="post">
+                <h2 class="mb-4">OTP Verification</h2>
+                <div class="mb-3">
+                    <label for="otp" class="form-label">Enter OTP</label>
+                    <input type="text" class="form-control" id="otp" name="enteredOTP" placeholder="Enter the OTP">
+                    <small id="otpError" class="text-danger"></small>
+                    <div class="d-flex mt-3 justify-content-between">
+                        <p class="d-flex">Time Remaining: <span id="minute"> </span>:<span id="second"> </span></p>
+                        <a class="d-flex" href="/resendOTP" onclick="sendOTP()">Resend OTP</a>
+                    </div>
+                    <!-- Display error messages using EJS if statements -->
+                    <% if (error === 'timeout_otp') { %>
+                        <div class="text-danger mb-3">OTP you received has expired.</div>
+                    <% } else if (error === 'incorrect_otp') { %>
+                        <div class="text-danger mb-3">Entered OTP is incorrect.</div>
+                    <% } else if (error === 'save_failed') { %>
+                        <div class="text-danger mb-3">Failed to save user data.</div>
+                    <% } else if (error === 'fetch_failed') { %>
+                        <div class="text-danger mb-3">Failed to fetch user data.</div>
+                    <% } %>
+                </div>
+                <button type="submit" class="btn ">Verify OTP</button>
+            </form>
+
+        </div>
+    </div>
+</div>
+<script src="/javascripts/otp.js"></script>

@@ -1,0 +1,11 @@
+#title-div{
+    display: flex;
+    justify-content: space-between;
+}
+
+body{
+    background-color: aqua;
+}
+#categoryBtn{
+    
+}

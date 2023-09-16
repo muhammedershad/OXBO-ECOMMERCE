@@ -1,0 +1,85 @@
+<nav class="navbar sticky-top w-100 navbar-expand-lg shadow-sm px-5" style="background-color: #ffffff;" data-bs-theme="light">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="/">
+      <div class="logo">
+        <h3 class="logo-h2">OXBO</h3>
+        <h6 class="logo-h6">since 2023</h6>
+      </div>
+    </a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarColor03" aria-controls="navbarColor03" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse ml-5" id="navbarColor03">
+      <ul class="navbar-nav ml-5 me-auto mb-2 mb-lg-0">
+        <li class="nav-item">
+          <a class="nav-link active" aria-current="page" href="/">Home</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link " href="/products?gender=Male">Men</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/products?gender=Female">Women</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">About Us</a>
+        </li>
+      </ul>
+      <form class="d-flex" role="search">
+        <input class="form-control me-2" type="search" id="searchInput" placeholder="Search" aria-label="Search">
+        <!-- <button class="btn btn-outline-light" type="submit">Search</button> -->
+    </form>
+      <a href="#">
+        <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 21 19">
+          <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 4C5.5-1.5-1.5 5.5 4 11l7 7 7-7c5.458-5.458-1.542-12.458-7-7Z"/>
+        </svg>
+      </a>
+      <a href="/account">
+        <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 18">
+          <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Zm-2 3h4a4 4 0 0 1 4 4v2H1v-2a4 4 0 0 1 4-4Z"/>
+        </svg>
+      </a>
+      <a href="/cart">
+        <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 20">
+          <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 15a2 2 0 1 0 0 4 2 2 0 0 0 0-4Zm0 0h8m-8 0-1-4m9 4a2 2 0 1 0 0 4 2 2 0 0 0 0-4Zm-9-4h10l2-7H3m2 7L3 4m0 0-.792-3H1"/>
+        </svg>
+      </a>
+    </div>
+  </div>
+</nav>
+
+<script>
+  // Get a reference to the search input element by its id
+  const searchInput = document.getElementById('searchInput');
+
+  // Function to handle the search action
+  function handleSearch() {
+      // Get the value of the input field
+      const searchValue = searchInput.value.trim(); // Trim whitespace
+
+      console.log(searchValue);
+      
+      // Check if the searchValue is not empty
+      if (searchValue !== '') {
+          const encodedSearch = encodeURIComponent(searchValue)
+          // Redirect to the products route with the search query as a parameter
+          window.location.href = `/products?encodedSearch=${encodedSearch}`;
+      }
+  }
+
+  // Add a blur event listener to the input field
+  searchInput.addEventListener('blur', handleSearch);
+
+  // Add a keypress event listener to the input field
+  searchInput.addEventListener('keypress', function (event) {
+      // Check if the key pressed is Enter (key code 13)
+      if (event.key === 'Enter') {
+          // Prevent the default form submission behavior
+          event.preventDefault();
+          
+          // Trigger the search action
+          handleSearch();
+      }
+  });
+
+
+</script>

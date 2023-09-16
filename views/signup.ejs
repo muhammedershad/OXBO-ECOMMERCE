@@ -1,0 +1,62 @@
+<%- include('./partials/header.ejs') %>
+
+<div class="container-fluid">
+    <div class="row min-vh-100">
+        <div class="col-md-6 m-0 p-0 d-none d-md-block">
+            <!-- Image section (visible on medium and larger screens) -->
+            <img src="/images/loginPageImage.jpeg" alt="Background Image" class="w-100 h-100 object-fit-cover">
+        </div>
+        <div class="col-md-6 col-12 p-0 m-0 d-flex align-items-center justify-content-center">
+            <!-- Signup form section -->
+            <!-- <form method="POST" action="/signup" class="p-4" >
+                <h2 class="mb-4">Sign Up</h2>
+                <div class="mb-3">
+                    <label for="email" class="form-label">Email</label>
+                    <input type="email" class="form-control" name="email" id="email" placeholder="Enter your email">
+                </div>
+                <div class="mb-3">
+                    <label for="phoneNumber" class="form-label">Phone Number</label>
+                    <input type="tel" class="form-control" name="phoneNumber" id="phoneNumber" placeholder="Enter your phone number">
+                </div>
+                <div class="mb-3">
+                    <label for="password" class="form-label">Password</label>
+                    <input type="password" class="form-control" name="password" id="password" placeholder="Enter your password">
+                </div>
+                <div class="mb-3">
+                    <label for="rePassword" class="form-label">Re-enter Password</label>
+                    <input type="password" class="form-control" name="rePassword" id="rePassword" placeholder="Re-enter your password">
+                </div>
+                <button type="submit" class="btn btn-primary w-100">Sign Up</button> -->
+            <!-- </form> -->
+            <div class="m-5 p-5 w-100">
+                <form id="signupForm" method="POST" action="/signup" class="p-1">
+                    <h2 class="mb-4">Sign Up</h2>
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email</label>
+                        <input type="email" class="form-control" name="email" id="email" placeholder="Enter your email">
+                        <small id="emailError" class="text-danger"></small>
+                    </div>
+                    <div class="mb-3">
+                        <label for="phoneNumber" class="form-label">Phone Number</label>
+                        <input type="tel" class="form-control" name="phoneNumber" id="phoneNumber" placeholder="Enter your phone number">
+                        <small id="phoneError" class="text-danger"></small>
+                    </div>
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Password</label>
+                        <input type="password" class="form-control" name="password" id="password" placeholder="Enter your password">
+                        <small id="passwordError" class="text-danger"></small>
+                    </div>
+                    <div class="mb-3">
+                        <label for="rePassword" class="form-label">Re-enter Password</label>
+                        <input type="password" class="form-control" name="rePassword" id="rePassword" placeholder="Re-enter your password">
+                        <small id="rePasswordError" class="text-danger"></small>
+                    </div>
+                    <!-- <button type="submit" class="btn btn-primary w-100" id="submitButton" disabled >Request OTP</button> -->
+                    <button type="submit" class="btn" id="submitButton" >Request OTP</button>
+                </form>
+            </div>
+            
+        </div>
+    </div>
+</div>
+<script src="/javascripts/signup.js"></script>

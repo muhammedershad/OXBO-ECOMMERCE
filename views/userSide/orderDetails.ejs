@@ -1,0 +1,227 @@
+<%- include('../partials/header.ejs') %>
+
+<!-- <div class="container">
+    <div class="row">
+      <div class="col-3">
+        <ul class="list-group">
+          <li class="list-group-item">My Profile</li>
+          <li class="list-group-item">My Info</li>
+          <li class="list-group-item">My Orders</li>
+          <li class="list-group-item">Wishlist</li>
+          <li class="list-group-item">Logout</li>
+        </ul>
+      </div>
+      
+      <div class="col-9">
+        <h2>User Information</h2>
+        <p>Name: John Doe</p> 
+        <p>Email: john@example.com</p>
+        <p>Address: 123 Main St, Anytown, USA</p>
+        
+        <h3>Recent Orders</h3>
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Order #</th>
+              <th>Date</th>
+              <th>Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>1234</td>
+              <td>1/1/2022</td> 
+              <td>$50</td>
+            </tr>
+            <tr>
+              <td>1235</td>
+              <td>1/5/2022</td>
+              <td>$25</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div> -->
+
+<div class="container mt-4">
+  <div class="row">
+    <div class="col-md-3">
+      <div class="list-group">
+        <!-- <a href="#" class="list-group-item list-group-item-action active"
+          >User Menu</a
+        > -->
+        <!-- <a href="#" class="list-group-item list-group-item-action"
+          >User Profile</a
+        > -->
+        <a href="/account" class="list-group-item list-group-item-action">My Info</a>
+        <a href="/orderList" class="list-group-item list-group-item-action">My Orders</a>
+        <a href="#" class="list-group-item list-group-item-action">Wishlist</a>
+        <a href="#" onclick="logout()" class="list-group-item list-group-item-action">Logout</a>
+      </div>
+    </div>
+    <div class="col-md-9">
+        <div class="card-body border rounded mb-3 w-100">
+            
+            <div class="card-body p-4 m-0 w-100">
+                <div class="row p-3 bg-light mb-2">
+                    <div class="col-6">
+                        <h6 class="mb-2">Ordered date: <%= orders.orderDate.toLocaleDateString() %></h6>
+                        <h6>
+                            <% if (orders.orderStatus === 'Delivered') { %>
+                                Delivered on: <%= new Date(orders.orderDate.getTime() + 7 * 24 * 60 * 60 * 1000).toLocaleDateString() %>
+                            <% } else { %>
+                                Estimated delivery date: <%= new Date(orders.orderDate.getTime() + 7 * 24 * 60 * 60 * 1000).toLocaleDateString() %>
+                            <% } %>
+                        </h6>
+                    </div>
+                    <div class="col-6 ">
+                        <div class="d-flex justify-content-end">
+                            <h6 class="mb-2">Ordered status: <%= orders.orderStatus %></h6>
+                        </div>
+                        <div class="d-flex justify-content-end">
+                            <button class="btn3 btn-danger" onclick="updateStatus('<%= orders._id %>')">
+                                <% if (orders.orderStatus === 'Delivered') { %>
+                                    Return Order
+                                <% } else { %>
+                                    Cancel Order
+                                <% } %>
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                  <p class="lead fw-normal mb-0" style="color: #1a1017;">Order Details</p>
+                  <p class="small text-muted mb-0">Receipt Voucher : 1KAU9-84UIL</p>
+                </div>
+                
+                <div class="card-body">
+                    <% orders.products.forEach(product => { %>
+                        <a href="/product?productId=<%= product.product._id %>">
+                            <div class="row mb-3">
+                                <div class="col-md-1">
+                                  <img src="/<%= product.product.image[0] %>"
+                                    class="img-fluid" alt="Phone" style="height: 60px; width: 55px;">
+                                </div>
+                                <div class="col-md-3 text-center d-flex justify-content-center align-items-center">
+                                  <p class="text-muted mb-0"><%= product.product.title %></p>
+                                </div>
+                                <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
+                                  <p class="text-muted mb-0 small"><%= product.size %></p>
+                                </div>
+                                <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
+                                  <p class="text-muted mb-0 small"><%= product.product.brand %></p>
+                                </div>
+                                <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
+                                  <p class="text-muted mb-0 small">Qty: <%= product.quantity %> </p>
+                                </div>
+                                <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
+                                  <p class="text-muted mb-0 small">₹<%= product.quantity * product.product.MRP %>.00</p>
+                                </div>
+                            </div>
+                        </a>
+                    <% }) %>
+                </div>
+                
+                <hr class="mb-4" style="background-color: #e0e0e0; opacity: 1;">
+
+                <div class="row">
+                    <div class="col-9">
+                        <div class=" pt-2">
+                            <p class="fw-bold mb-3">Delivery Addres</p>
+                            <h6 class="mb-2 fw-bold"><%= orders.address.name %></h6>
+                            <p class="mb-1"><%= orders.address.address %></p>
+                            <p class="mb-1"><%= orders.address.city %>, <%= orders.address.state %></p>
+                            <p class="mb-1"><%= orders.address.country %>, <%= orders.address.pincode %></p>
+                            <p class="mb-3 fw-bold"><%= orders.address.mobileNumber %></p>
+                            
+                        </div>
+                    </div>
+                    <div class=" col-3 mr-3">
+                        <div class="mb-2 mr-3">
+                            <div class="d-flex justify-content-between">
+                                <p>Subtotal:</p>
+                                <p>₹<%= subtotal %>.00</p>
+                            </div>
+                            <div class="d-flex justify-content-between">
+                                <p>Discount:</p>
+                                <p>-₹<%= orders.discount %>.00</p>
+                            </div>
+                            <div class="d-flex justify-content-between">
+                                <p>Delivery Charge:</p>
+                                <p>₹40.00</p>
+                            </div>
+                            <div class="d-flex justify-content-between">
+                                <p class="fw-bold">Total:</p>
+                                <p class="fw-bold">₹<%= orders.total %>.00</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                
+              </div>
+
+        </div>
+      
+    </div>
+    
+  </div>
+</div>
+
+<div class="modal" tabindex="-1" role="dialog" id="confirmationModal">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Confirmation</h5>
+                <!-- <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button> -->
+            </div>
+            <div class="modal-body">
+                Are you really sure you want to cancel?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="refresh()" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" onclick="updateOrderStatus('<%= orders._id %>')" data-bs-dismiss="modal" id="confirmStatusChange">Confirm</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    async function updateStatus(orderId){
+
+        const confirmationModal = new bootstrap.Modal(document.getElementById('confirmationModal'));
+        const confirmButton = document.getElementById('confirmStatusChange');
+        // console.log('hii');
+        confirmationModal.show();
+    }
+
+    async function updateOrderStatus(orderId){
+
+        const confirmationModal = new bootstrap.Modal(document.getElementById('confirmationModal'));
+        confirmationModal.hide();
+
+        const response = await fetch(`/cancelOrder?orderId=${orderId}`, {
+            method: 'POST',
+        });
+        window.location.reload()
+
+        if (response.ok) {
+            // Order status updated successfully
+            console.log('Order status updated:', orderId);
+
+            window.location.reload()
+            confirmationModal.hide();
+            
+        } else {
+            // Handle the error case, e.g., show an error message to the user
+            console.error('Failed to update order status:', orderId);
+        }
+        
+    }
+</script>
+
+<%- include('../partials/footer.ejs') %>

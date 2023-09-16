@@ -1,0 +1,171 @@
+
+<%- include('./partials/adminnav.ejs') %>
+
+        <div class="dash-content">
+            <div class="overview">
+                <div class="title" id="title-div">
+                    <i class="uil uil-tachometer-fast-alt"></i>
+                    <span class="text">Category</span>
+
+                    <!-- Button trigger modal -->
+                    <button type="button" id="categoryBtn" class="btn" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                        Add Category
+                    </button>
+                    
+                    <!-- Modal -->
+                    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h1 class="modal-title fs-5" id="exampleModalLabel">Add Category</h1>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <form action="/admin/addCategory" method="post">
+                                    <div class="modal-body">
+                                        <input type="text" class="form-control my-2" id="category" name="categoryName" placeholder="Enter category">
+                                        <small id="categoryError" class="text-danger d-block"></small>
+                                        <label for="">Select the Gender : </label>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="gender" id="inlineRadio1" value="Male">
+                                            <label class="form-check-label" for="inlineRadio1">Male</label>
+                                          </div>
+                                          <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="gender" id="inlineRadio2" value="Female">
+                                            <label class="form-check-label" for="inlineRadio2">Female</label>
+                                          </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                        <button type="submit" class="btn btn-primary">Add Category</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Category</th>
+                            <th>Gender</th>
+                            <th>Status</th>
+                            <th>Edit</th>
+                            <th>Actions</th>
+                            <th>Actions</th>
+                            <th>Subcategories</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% categorylist.forEach(category => { %>
+                            <tr>
+                                <td><%= category.category %></td>
+                                <td><%= category.gender %></td>
+                                <td><%= category.active ? 'Listed ' : 'Unlisted ' %> </td>
+                                <td>
+                                    <!-- Button trigger modal -->
+                                    <button type="button" id="categoryBtn" class="btn" data-bs-toggle="modal" data-bs-target="#editCategoryModal<%= category._id %>">
+                                        Edit
+                                    </button>
+                                    
+                                    <!-- Modal -->
+                                    <div class="modal fade" id="editCategoryModal<%= category._id %>" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog modal-dialog-centered">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h1 class="modal-title fs-5" id="exampleModalLabel">Edit Category</h1>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </div>
+                                                <form action="/admin/updatCategory/<%= category._id %>" method="post">
+                                                    <div class="modal-body">
+                                                        <input type="text" class="form-control my-2" name="categoryName" placeholder="Enter category" value="<%= category.category %>">
+                                                        <label for="">Select the Gender : </label>
+                                                        <div class="form-check form-check-inline">
+                                                            <input class="form-check-input" type="radio" id="male" name="gender" value="Male" <%= category.gender === 'Male' ? 'checked' : '' %>>
+                                                            <label class="form-check-label" for="male">Male</label>
+                                                        </div>
+                                                        <div class="form-check form-check-inline">
+                                                            <input class="form-check-input" type="radio" id="female" name="gender" value="Female" <%= category.gender === 'Female' ? 'checked' : '' %>>
+                                                            <label class="form-check-label" for="female">Female</label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                        <button type="submit" class="btn btn-primary">Edit Category</button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <button class="btn" id="categoryBtn" onclick="update('<%= category._id %>')" data-id="<%= category._id %>">
+                                        <%= category.active ? 'Unlist' : 'List' %>
+                                    </button>
+                                </td>
+                                <!-- Inside the loop that iterates through categories -->
+                                <td>
+                                    <button type="button" id="categoryBtn" class="btn" data-bs-toggle="modal" data-bs-target="#addSubcategoryModal<%= category._id %>">
+                                        Add Subcategory
+                                    </button>
+                                    
+                                    <!-- Modal -->
+                                    <div class="modal fade" id="addSubcategoryModal<%= category._id %>" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog modal-dialog-centered">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h1 class="modal-title fs-5" id="exampleModalLabel">Add Subcategory</h1>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </div>
+                                                <form action="/admin/addSubcategory/<%= category._id %>" method="post">
+                                                    <div class="modal-body">
+                                                        <!-- Form fields for adding subcategory -->
+                                                        <input type="text" class="form-control my-2" id="subcategory" name="subcategoryName" placeholder="Enter Subcategory">
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                        <button type="submit" class="btn btn-primary">Add Subcategory</button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                </td>
+                                <!-- Inside the loop that iterates through categories -->
+                                <td>
+                                    <!-- List Subcategories -->
+                                    <ul style="list-style-type: none;" class="p-0">
+                                        <% category.subcategories.forEach(subcategory => { %>
+                                            <div class="row">
+                                                <div class="col-6 mb-3">
+                                                    <li class="no-bullets p-0"><%= subcategory.subcategory %></li>
+                                            
+                                                </div>
+                                                <div class="col-6">
+                                                    <button class="btn" id="categoryBtn" onclick="updateSubcategory('<%= category._id %>','<%= subcategory.subcategory %>')" data-id="<%= subcategory %>">
+                                                        <%= subcategory.active ? 'Unlist' : 'List' %>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        <% }); %>
+                                    </ul>
+                                </td>
+                            </tr>
+                        <% }); %>
+                    </tbody>
+                </table>
+
+                
+            </div>
+        </div>
+    </section>
+    <script>
+        
+    </script>
+    <script src="/javascripts/category.js"></script>
+    <script src="/javascripts/dash.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
+   
+</body>
+</html>

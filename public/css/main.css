@@ -1,0 +1,317 @@
+body{
+    background-color: rgb(255, 255, 255);
+    margin: 0;
+    padding: 0;
+}
+
+/* h1,h2,h3,h4,h5,h6{
+    font-family: 'Bentham', serif;
+} */
+
+.logo{
+    font-family: 'Bentham', serif;
+    /* font-family: 'Poppins', sans-serif; */
+    padding: 0;
+    margin: 0;
+}
+
+.logo-h2{
+
+    font-family: 'Bentham', serif;
+    /* font-family: 'Poppins', sans-serif; */
+    margin: 0 0 -10px 0;
+    padding: 0;
+}
+.logo-h6{
+    font-family: 'Bentham', serif;
+    /* font-family: 'Poppins', sans-serif; */
+    margin: 0 0 0 15px;
+    padding: 0;
+    font-size: x-small;
+}
+
+footer{
+    background-color: #d2d2d2;
+}
+
+a{
+    color: #363636;
+}
+
+svg{
+    background-color: rgb(255, 255, 255);
+    width: 20px;
+    height: 20px;
+    margin: 15px;
+    color: rgb(46, 39, 39);
+}
+
+.btn{
+    padding: 6px 15px 6px 15px ;
+    border-radius: 13px;
+    background: rgb(29,30,57);
+    background: linear-gradient(90deg, rgba(29,30,57,1) 0%, rgba(65,86,148,1) 66%, rgba(37,44,101,1) 100%);
+    background-color: linear-gradient(90deg, rgb(58, 59, 97) 0%, rgba(65,86,148,1) 66%, rgba(37,44,101,1) 100%);
+    color: white;
+    font-size: small;
+}
+
+#availableCoupon{
+    color: rgb(12, 5, 102);
+}
+
+.btn1{
+    padding: 6px 15px 6px 15px ;
+    border-radius: 0;
+    background-color: linear-gradient(90deg, rgba(29,30,57,1) 0%, rgba(65,86,148,1) 66%, rgba(37,44,101,1) 100%);
+    color: rgb(255, 255, 255);
+    font-size: large;
+    text-decoration: none;
+}
+
+.btn2{
+    padding: 6px 15px 6px 15px ;
+    border-radius: 13px;
+    border: solid;
+    border-width: 1px;
+    border-color: #040404;
+    color: rgb(0, 0, 0);
+    font-size: small;
+}
+
+.btn3{
+    padding: 6px 15px 6px 15px ;
+    border-radius: 13px;
+    border: solid;
+    border-width: 1px;
+    border-color: #ffffff;
+    background-color: rgb(208, 94, 94);
+    color: rgb(255, 255, 255);
+    font-size: small;
+}
+
+.form-label{
+    outline: none;
+    box-shadow: none;
+}
+
+.form-label:click {
+    outline: none;
+    box-shadow: none;
+}
+
+#nothing-btn{
+    border: 0;
+    border-width: 0;
+    background-color: transparent;
+}
+
+
+.required-label::after {
+    content: " *";
+    color: red;
+    margin: 0;
+    padding: 0;
+}
+
+.overflow-part {
+    margin-top: 200px; /* Adjust the margin-top to match the height of the short part */
+    /* background-color: #e9e9e9; */
+}
+  
+.top-part {
+    position: sticky;
+    top: 0;
+    height: 200px; /* Adjust the height as per your requirement */
+    /* background-color: #f1f1f1;  */
+}
+
+.container1 {
+    position: relative;
+    width: 100%;
+    height: 100vh; /* Adjust the height as per your requirement */
+    overflow: auto;
+    /* overflow-y: hidden;  */
+  }
+
+
+
+
+
+.size-option {
+display: inline-flex;
+margin-right: 10px;
+}
+
+.size-radio {
+display: none;
+}
+
+.size-radio + label {
+display: flex;
+justify-content: center;
+padding: 8px 12px;
+height: 40px;
+width: 60px;
+border: 1px solid #ccc;
+cursor: pointer;
+border-radius: 5px;
+}
+
+.size-radio:checked + label {
+    display: inline;
+background-color: #252729; /* Change this to your desired selected color */
+color: #fff; /* Change text color when selected */
+border-color: #131415; /* Change border color when selected */
+}
+
+.progress-bar{
+    color:linear-gradient(90deg, rgba(29,30,57,1) 0%, rgba(65,86,148,1) 66%, rgba(37,44,101,1) 100%);;
+    background: rgb(29,30,57);
+    background: radial-gradient(circle, rgba(29,30,57,1) 0%, rgba(65,86,148,0.7428221288515406) 40%, rgba(37,50,101,1) 88%);
+}
+/* .icon-hover-primary:hover {
+    border-color: #3b71ca !important;
+    background-color: white !important;
+  }
+  
+  .icon-hover-primary:hover i {
+    color: #3b71ca !important;
+  }
+  .icon-hover-danger:hover {
+    border-color: #dc4c64 !important;
+    background-color: white !important;
+  }
+  
+  .icon-hover-danger:hover i {
+    color: #dc4c64 !important;
+  } */
+
+/* cards */
+
+@import url('https://fonts.googleapis.com/css?family=Roboto:400,500,700');
+*
+{
+    -webkit-box-sizing: border-box;
+            box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+
+body
+{
+    font-family: 'Roboto', sans-serif;
+}
+a
+{
+    text-decoration: none;
+}
+.product-card {
+    width: 330px;
+    position: relative;
+    box-shadow: 0 2px 7px #dfdfdf;
+    margin: 20px auto;
+    background: #fafafa;
+}
+
+.badge {
+    position: absolute;
+    left: 0;
+    top: 20px;
+    text-transform: uppercase;
+    font-size: 13px;
+    font-weight: 700;
+    background: red;
+    color: #fff;
+    padding: 3px 10px;
+}
+
+.product-tumb {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 300px;
+    padding: 50px;
+    background: #f0f0f0;
+}
+
+.product-tumb img {
+    max-width: 100%;
+    max-height: 100%;
+}
+
+.product-details {
+    padding: 30px;
+}
+
+.product-catagory {
+    display: block;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: #ccc;
+    margin-bottom: 18px;
+}
+
+.product-details h4 a {
+    font-weight: 500;
+    display: block;
+    margin-bottom: 18px;
+    text-transform: uppercase;
+    color: #363636;
+    text-decoration: none;
+    transition: 0.3s;
+}
+
+.product-details h4 a:hover {
+    color: #fbb72c;
+}
+
+.product-details p {
+    font-size: 15px;
+    line-height: 22px;
+    margin-bottom: 18px;
+    color: #999;
+}
+
+.product-bottom-details {
+    overflow: hidden;
+    border-top: 1px solid #eee;
+    padding-top: 20px;
+}
+
+.product-bottom-details div {
+    float: left;
+    width: 50%;
+}
+
+.product-price {
+    font-size: 18px;
+    color: #fbb72c;
+    font-weight: 600;
+}
+
+.product-price small {
+    font-size: 80%;
+    font-weight: 400;
+    text-decoration: line-through;
+    display: inline-block;
+    margin-right: 5px;
+}
+
+.product-links {
+    text-align: right;
+}
+
+.product-links a {
+    display: inline-block;
+    margin-left: 5px;
+    color: #e1e1e1;
+    transition: 0.3s;
+    font-size: 17px;
+}
+
+.product-links a:hover {
+    color: #fbb72c;
+}

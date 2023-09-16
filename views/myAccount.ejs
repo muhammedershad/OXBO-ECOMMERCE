@@ -1,0 +1,420 @@
+<%- include('./partials/header.ejs') %>
+
+<!-- <div class="container">
+    <div class="row">
+      <div class="col-3">
+        <ul class="list-group">
+          <li class="list-group-item">My Profile</li>
+          <li class="list-group-item">My Info</li>
+          <li class="list-group-item">My Orders</li>
+          <li class="list-group-item">Wishlist</li>
+          <li class="list-group-item">Logout</li>
+        </ul>
+      </div>
+      
+      <div class="col-9">
+        <h2>User Information</h2>
+        <p>Name: John Doe</p> 
+        <p>Email: john@example.com</p>
+        <p>Address: 123 Main St, Anytown, USA</p>
+        
+        <h3>Recent Orders</h3>
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Order #</th>
+              <th>Date</th>
+              <th>Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>1234</td>
+              <td>1/1/2022</td> 
+              <td>$50</td>
+            </tr>
+            <tr>
+              <td>1235</td>
+              <td>1/5/2022</td>
+              <td>$25</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div> -->
+
+<div class="container mt-4">
+  <div class="row">
+    <div class="col-md-3">
+      <div class="list-group">
+        <!-- <a href="#" class="list-group-item list-group-item-action active"
+          >User Menu</a
+        > -->
+        <!-- <a href="#" class="list-group-item list-group-item-action"
+          >User Profile</a
+        > -->
+        <a href="#" class="list-group-item list-group-item-action">My Info</a>
+        <a href="/orderList" class="list-group-item list-group-item-action">My Orders</a>
+        <a href="#" class="list-group-item list-group-item-action">Wishlist</a>
+        <a href="" onclick="logout()" class="list-group-item list-group-item-action">Logout</a>
+      </div>
+    </div>
+    <div class="col-md-9">
+      <div class="card mb-3">
+        <div class="card-header">User Information</div>
+        <div class="card-body">
+          <h5 class="card-title mb-2"><%= user.address[0].name %></h5>
+          <p class="card-text"><%= user.email %></p>
+          <!-- <p class="card-text">Address: 123 Main St, City, Country</p> -->
+          <p class="card-text"><%= user.phoneNumber %></p>
+        </div>
+      </div>
+      <div class="card border shadow-1">
+        <div class="m-4">
+          
+          <% if (user.address.length !== 0) { %>
+            <div class="row p-0 m-0 ">
+              
+              <div class="col-10 p-0">
+                <h5 class="card-title mb-4 ">Select your address</h5>
+            </div>
+            <div class="col-2 d-flex justify-content-end p-0">
+                <!-- <button  class="btn btn-sm m-0 d-flex justify-content-center align-items-center"></button> -->
+                <button style="height: 30px; width: 110px;" type="button" class="btn btn-sm m-0 d-flex justify-content-center align-items-center" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                    Add address
+                </button>
+            </div>
+
+            <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h1 class="modal-title fs-5" id="exampleModalLabel">Add New Address</h1>
+                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <form id="addressForm" method="post" action="/addAddress">
+                        <div class="modal-body">
+                        
+                            <div class="form-group mb-2">
+                                <!-- <label class="required-label" for="name">Name</label> -->
+                                <input type="text" class="form-control" id="name" name="name" required placeholder="Name">
+                            </div>
+                            <div class="form-group mb-2">
+                                <!-- <label for="address">Address:</label> -->
+                                <input type="text" class="form-control" id="address" name="address" required placeholder="Address">
+                            </div>
+                            <div class="form-group mb-2">
+                                <!-- <label for="city">City/Town:</label> -->
+                                <input type="text" class="form-control" id="city" name="city" required placeholder="City/Town">
+                            </div>
+                            <div class="form-group mb-2">
+                                <!-- <label for="state">State:</label> -->
+                                <input type="text" class="form-control" id="state" name="state" required placeholder="State">
+                            </div>
+                            <div class="form-group mb-2">
+                                <!-- <label for="country">Country:</label> -->
+                                <input type="text" class="form-control" id="country" name="country" required placeholder="Country">
+                            </div>
+                            <div class="form-group mb-2">
+                                <!-- <label for="pincode">Pincode:</label> -->
+                                <input type="text" class="form-control" id="pincode" name="pincode" required placeholder="Pincode">
+                            </div>
+                            <div class="form-group mb-2">
+                                <!-- <label for="altNumber">Mobile Number:</label> -->
+                                <input type="number" class="form-control" id="altNumber" name="mobileNumber" placeholder="Mobile Number">
+                            </div>
+                            <!-- <button type="submit" class="btn btn-primary mb-2">Submit</button> -->
+                        </div>
+                        <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn ">Add address</button>
+                        </div>
+                    </form>
+                    
+                  </div>
+                </div>
+              </div>
+            <!-- Render the cart items here -->
+            </div>
+
+            <div class="row">
+              <h6 class="mb-3">Default Address</h6>
+              <% if (user.address[0]) { %>
+                  <div class="col-md-12 mb-3">
+                      <div class="card h-100" style="" data-index="<%= 0 %>">
+                        <div class="form-check">
+                          <!-- <input class="form-check-input d-flex mx-1 mt-4" type="radio" name="selectedAddress" value="<%= 0 %>" id="address<%= 0 %>" > -->
+                          <div class="card-body">
+                          
+                            <h5 class="card-title"><%= user.address[0].name%></h5>
+                            <h6 class="card-subtitle mb-2 text-body-secondary"><%= user.address[0].mobileNumber %></h6>
+                            <p class="card-text"><%= user.address[0].address %>, <%= user.address[0].city %>, <%= user.address[0].state %>, <%= user.address[0].country %>, <%= user.address[0].pincode %></p>
+                            <a href="#" data-bs-toggle="modal" data-bs-target="#editAddressModal<%= user.address[0]._id %>" class="btn2 card-link">Edit</a>
+                            <a href="#" onclick="deleteAddress('<%= user._id %>','<%= 0 %>')" class="btn2 card-link">Delete</a>
+                            <!-- <a href="#" class="btn2 card-link">Set as default</a> -->
+
+                            <div class="modal fade" id="editAddressModal<%= user.address[0]._id %>" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                <div class="modal-dialog">
+                                  <div class="modal-content">
+                                    <div class="modal-header">
+                                      <h1 class="modal-title fs-5" id="exampleModalLabel">Edit Address</h1>
+                                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <form id="addressForm" method="post" action="/editAddress?userId=<%= user._id %>&index=<%= 0 %>">
+                                        <div class="modal-body">
+                                        
+                                            <div class="form-group mb-2">
+                                                <!-- <label class="required-label" for="name">Name</label> -->
+                                                <input type="text" class="form-control" id="name" name="name" required placeholder="Name" value="<%= user.address[0].name %>">
+                                            </div>
+                                            <div class="form-group mb-2">
+                                                <!-- <label for="address">Address:</label> -->
+                                                <input type="text" class="form-control" id="address" name="address" required placeholder="Address" value="<%= user.address[0].address %>">
+                                            </div>
+                                            <div class="form-group mb-2">
+                                                <!-- <label for="city">City/Town:</label> -->
+                                                <input type="text" class="form-control" id="city" name="city" required placeholder="City/Town" value="<%= user.address[0].city %>">
+                                            </div>
+                                            <div class="form-group mb-2">
+                                                <!-- <label for="state">State:</label> -->
+                                                <input type="text" class="form-control" id="state" name="state" required placeholder="State" value="<%= user.address[0].state %>">
+                                            </div>
+                                            <div class="form-group mb-2">
+                                                <!-- <label for="country">Country:</label> -->
+                                                <input type="text" class="form-control" id="country" name="country" required placeholder="Country" value="<%= user.address[0].country %>">
+                                            </div>
+                                            <div class="form-group mb-2">
+                                                <!-- <label for="pincode">Pincode:</label> -->
+                                                <input type="text" class="form-control" id="pincode" name="pincode" required placeholder="Pincode" value="<%= user.address[0].pincode %>">
+                                            </div>
+                                            <div class="form-group mb-2">
+                                                <!-- <label for="altNumber">Mobile Number:</label> -->
+                                                <input type="number" class="form-control" id="altNumber" name="mobileNumber" placeholder="Mobile Number" value="<%= user.address[0].mobileNumber %>">
+                                            </div>
+                                            <!-- <button type="submit" class="btn btn-primary mb-2">Submit</button> -->
+                                        </div>
+                                        <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                        <button type="submit" class="btn ">Edit address</button>
+                                        </div>
+                                    </form>
+                                    
+                                  </div>
+                                </div>
+                              </div>
+
+                          </div>
+                        </div>
+                        
+                        
+                      </div>
+                    </div>
+              <% } else { %>
+                
+              <% } %>
+
+              <h6 class="mb-3">Other Address</h6>
+                <% for( let index = 1; index < user.address.length; index++ ) { %>
+                  <div class="col-md-12 mb-2">
+                      <div class="card h-100" style="" data-index="<%= index %>">
+                        <div class="form-check">
+                          <!-- <input class="form-check-input d-flex mx-1 mt-4" type="radio" name="selectedAddress" value="<%= index %>" id="address<%= index %>" > -->
+                          <div class="form-check-label card-body " for="address<%= index %>">
+                            <h5 class="card-title"><%= user.address[index].name%></h5>
+                            <h6 class="card-subtitle mb-2 text-body-secondary"><%= user.address[index].mobileNumber %></h6>
+                            <p class="card-text"><%= user.address[index].address %>, <%= user.address[index].city %>, <%= user.address[index].state %>, <%= user.address[index].country %>, <%= user.address[index].pincode %></p>
+                            <a href="#" data-bs-toggle="modal" data-bs-target="#editAddressModal<%= user.address[index]._id %>" class="btn2 card-link">Edit</a>
+                            <!-- <button class="btn2 card-link">Edit</button> -->
+                            <a href="#" onclick="deleteAddress('<%= user._id %>','<%= index %>')" class="btn2 card-link">Delete</a>
+                            <a href="#" onclick="makeDefaultAddress('<%= user._id %>','<%= index %>')" class="btn2 card-link">Set as default</a>
+
+                            <div class="modal fade" id="editAddressModal<%= user.address[index]._id %>" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                <div class="modal-dialog">
+                                  <div class="modal-content">
+                                    <div class="modal-header">
+                                      <h1 class="modal-title fs-5" id="exampleModalLabel">Edit Address</h1>
+                                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <form id="addressForm" method="post" action="/editAddress?userId=<%= user._id %>&index=<%= index %>">
+                                        <div class="modal-body">
+                                        
+                                            <div class="form-group mb-2">
+                                                <!-- <label class="required-label" for="name">Name</label> -->
+                                                <input type="text" class="form-control" id="name" name="name" required placeholder="Name" value="<%= user.address[index].name %>">
+                                            </div>
+                                            <div class="form-group mb-2">
+                                                <!-- <label for="address">Address:</label> -->
+                                                <input type="text" class="form-control" id="address" name="address" required placeholder="Address" value="<%= user.address[index].address %>">
+                                            </div>
+                                            <div class="form-group mb-2">
+                                                <!-- <label for="city">City/Town:</label> -->
+                                                <input type="text" class="form-control" id="city" name="city" required placeholder="City/Town" value="<%= user.address[index].city %>">
+                                            </div>
+                                            <div class="form-group mb-2">
+                                                <!-- <label for="state">State:</label> -->
+                                                <input type="text" class="form-control" id="state" name="state" required placeholder="State" value="<%= user.address[index].state %>">
+                                            </div>
+                                            <div class="form-group mb-2">
+                                                <!-- <label for="country">Country:</label> -->
+                                                <input type="text" class="form-control" id="country" name="country" required placeholder="Country" value="<%= user.address[index].country %>">
+                                            </div>
+                                            <div class="form-group mb-2">
+                                                <!-- <label for="pincode">Pincode:</label> -->
+                                                <input type="text" class="form-control" id="pincode" name="pincode" required placeholder="Pincode" value="<%= user.address[index].pincode %>">
+                                            </div>
+                                            <div class="form-group mb-2">
+                                                <!-- <label for="altNumber">Mobile Number:</label> -->
+                                                <input type="number" class="form-control" id="altNumber" name="mobileNumber" placeholder="Mobile Number" value="<%= user.address[index].mobileNumber %>">
+                                            </div>
+                                            <!-- <button type="submit" class="btn btn-primary mb-2">Submit</button> -->
+                                        </div>
+                                        <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                        <button type="submit" class="btn ">Edit address</button>
+                                        </div>
+                                    </form>
+                                    
+                                  </div>
+                                </div>
+                              </div>
+
+                          </div>
+                        </div>
+                        
+                      </div>
+                    </div>
+                <% } %>
+            </div>
+          <% } else { %>
+            
+            <h6 class="mb-3">Contact Details</h6>
+            <form id="addressForm" style="width: 500px;" method="post" action="/addAddress">
+              <div class="modal-body">
+              
+                  <div class="form-group mb-2">
+                      <label class="required-label" for="name">Name</label>
+                      <input type="text" class="form-control" id="name" name="name" required placeholder="Name">
+                  </div>
+                  <div class="form-group mb-2">
+                      <label for="address">Address:</label>
+                      <textarea type="text" class="form-control" id="address" name="address" required rows="3" required placeholder="Address"></textarea>
+                      <!-- <input type="text" class="form-control" id="address" name="address" required placeholder="Address"> -->
+                  </div>
+                  <div class="form-group mb-2">
+                      <label for="city">City/Town:</label>
+                      <input type="text" class="form-control" id="city" name="city" required placeholder="City/Town">
+                  </div>
+                  <div class="form-group mb-2">
+                      <label for="state">State:</label>
+                      <input type="text" class="form-control" id="state" name="state" required placeholder="State">
+                  </div>
+                  <div class="form-group mb-2">
+                      <label for="country">Country:</label>
+                      <input type="text" class="form-control" id="country" name="country" required placeholder="Country">
+                  </div>
+                  <div class="form-group mb-2">
+                      <label for="pincode">Pincode:</label>
+                      <input type="text" class="form-control" id="pincode" name="pincode" required placeholder="Pincode">
+                  </div>
+                  <div class="form-group mb-2">
+                      <label for="altNumber">Mobile Number:</label>
+                      <input type="number" class="form-control" id="altNumber" name="mobileNumber" placeholder="Mobile Number">
+                  </div>
+                  <!-- <button type="submit" class="btn btn-primary mb-2">Submit</button> -->
+              </div>
+              <div class="modal-footer">
+              <!-- <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button> -->
+              <button type="submit" class="btn ">Add address</button>
+              </div>
+          </form>
+
+          <% } %>
+
+          
+        </div>
+      </div>
+      <!-- <div class="card">
+        <div class="card-header">User Information</div>
+        <div class="card-body">
+          <h5 class="card-title">John Doe</h5>
+          <p class="card-text">Email: john@example.com</p>
+          <p class="card-text">Address: 123 Main St, City, Country</p>
+          <p class="card-text">Phone: 123-456-7890</p>
+        </div>
+      </div> -->
+      <!-- <div class=" container-fluid d-flex justify-content-between">
+        <h4>Address</h4>
+        <a href="/newAddress"><button class="btn justify-content-end">Add Address</button></a>
+      </div> -->
+      <div class="row">
+        
+        <!-- <div class="col-md-5">
+          <div class="card h-100" style="">
+            <div class="card-body">
+              <h5 class="card-title">Muhammed Ershad P</h5>
+              <h6 class="card-subtitle mb-2 text-body-secondary">9747281932</h6>
+              <p class="card-text">Panniyodan(H), Kattayad Post, Vellamund</p>
+              <a href="#" class="card-link">Edit</a>
+              <a href="#" class="card-link">Delete</a>
+              <a href="#" class="card-link">Set as default</a>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-5">
+          <div class="card h-100" style="">
+            <div class="card-body">
+              <h5 class="card-title">Card title</h5>
+              <h6 class="card-subtitle mb-2 text-body-secondary">Card subtitle</h6>
+              <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+              <a href="#" class="card-link">Card link</a>
+              <a href="#" class="card-link">Another link</a>
+            </div>
+          </div>
+        </div> -->
+      </div>
+    </div>
+    
+  </div>
+</div>
+
+
+
+<%- include('./partials/footer.ejs') %>
+<script>
+  function logout(){
+    fetch(`/logout`,{
+        method:"POST",
+    }).then(()=>{
+        window.location.reload()
+    })
+  }
+</script>
+
+<script>
+
+  function orderList(){
+    fetch(`/orderList`,{
+          method:"GET",
+      }).then(()=>{
+         
+      })
+  }
+
+  function deleteAddress(userId,index){
+      fetch(`/deleteAddress?userId=${userId}&index=${index}`,{
+          method:"DELETE",
+      }).then(()=>{
+          window.location.reload()
+      })
+  }
+
+  function makeDefaultAddress(userId,index){
+      fetch(`/makeDefaultAddress?userId=${userId}&index=${index}`,{
+          method:"POST",
+      }).then(()=>{
+          window.location.reload()
+      })
+  }
+
+</script>

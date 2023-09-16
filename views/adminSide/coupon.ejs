@@ -1,0 +1,129 @@
+
+<%- include('../partials/adminnav.ejs') %>
+
+        <div class="dash-content">
+            <div class="overview">
+                <div class="title" id="title-div">
+                    <i class="uil uil-tachometer-fast-alt"></i>
+                    <span class="text">Coupons</span>
+
+                    <!-- Button trigger modal -->
+                    <button type="button" class="btn" id="categoryBtn" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                        Add Coupon
+                    </button>
+                    
+                    <!-- Modal -->
+                    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h1 class="modal-title fs-5" id="exampleModalLabel">Add Coupon</h1>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <form action="/admin/coupon" method="post">
+                                    <div class="modal-body">
+                                        <input type="text" class="form-control my-2" id="couponCode" name="couponCode" placeholder="Enter coupon code" required>
+                                        <input type="text" class="form-control my-2" id="couponAmount" name="couponAmount" placeholder="Enter coupon Amount or discount percentage" required>
+                                        <input type="number" class="form-control my-2" id="couponMinPurchase" name="couponMinPurchase" placeholder="Enter minimum amount of purchase" required>
+                                        <select class="form-select mb-2" id="couponTypeSelect" name="couponType" required>
+                                            <option value="amount" selected>Amount</option>
+                                            <option value="percentage">Percentage</option>
+                                        </select>
+                                        <label class="my-1" for="expiryDate">Select expiry date</label>
+                                        <input type="date" class="form-control my-2" id="expiryDate" name="expiryDate" required>
+                                        <small id="couponyError" class="text-danger d-block"></small>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                        <button type="submit" class="btn btn-primary">Add Coupon</button>
+                                    </div>
+                                </form>
+                                
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Coupon Code</th>
+                            <th>Amount / Percentage</th>
+                            <th>Minimum Purchase Amount</th>
+                            <th>Coupon Type</th>
+                            <th>Created At</th>
+                            <th>Expire At</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% coupons.forEach(coupon => { %>
+                            <tr>
+                                <td><%= coupon.code %></td>
+                                <td><%= coupon.amount %></td>
+                                <td><%= coupon.minPurchaseAmount %></td>
+                                <td><%= coupon.type %></td>
+                                <td><%= coupon.createdAt.toLocaleDateString() %></td>
+                                <td><%= coupon.expiresAt.toLocaleDateString() %></td>
+                                <td><%= coupon.active ? 'Listed ' : 'Unlisted ' %> </td>
+                                <td>
+                                    <!-- Button trigger modal -->
+                                    <button type="button" class="btn" id="categoryBtn" data-bs-toggle="modal" data-bs-target="#editCategoryModal<%= coupon._id %>">
+                                        Edit
+                                    </button>
+                                    
+                                    <!-- Modal -->
+                                    <div class="modal fade" id="editCategoryModal<%= coupon._id %>" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog modal-dialog-centered">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h1 class="modal-title fs-5" id="exampleModalLabel">Edit Coupon</h1>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </div>
+                                                <form action="/admin/coupon-edit" method="post">
+                                                    <div class="modal-body">
+                                                        <input type="text" name="couponId" value="<%= coupon._id %>" hidden>
+                                                        <input type="text" class="form-control my-2" id="couponCode" name="couponCode" placeholder="Enter coupon code" value="<%= coupon.code %>" required>
+                                                        <input type="text" class="form-control my-2" id="couponAmount" name="couponAmount" placeholder="Enter coupon Amount or discount percentage" value="<%= coupon.amount %>" required>
+                                                        <input type="number" class="form-control my-2" id="couponMinPurchase" name="couponMinPurchase" placeholder="Enter minimum amount of purchase" value="<%= coupon.minPurchaseAmount %>" required>
+                                                        <select class="form-select mb-2" id="couponTypeSelect" name="couponType" required>
+                                                            <option value="<%= coupon.type %>" selected><%= coupon.type %></option>
+                                                            <option value="amount" >Amount</option>
+                                                            <option value="percentage">Percentage</option>
+                                                        </select>
+                                                        <label class="my-1" for="expiryDate">Select expiry date</label>
+                                                        <input type="date" class="form-control my-2" id="expiryDate" value="<%= coupon.expiresAt.toISOString().slice(0,10) %>" name="expiryDate" required>
+                                                        <small id="couponyError" class="text-danger d-block"></small>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                        <button type="submit" class="btn btn-primary">Add Coupon</button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <button class="btn" id="categoryBtn" onclick="update('<%= coupon._id %>')" data-id="<%= coupon._id %>">
+                                        <%= coupon.active ? 'Unlist' : 'List' %>
+                                    </button>
+                                </td>
+                            </tr>
+                        <% }); %>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+    <script>
+        
+    </script>
+    <script src="/javascripts/coupon.js"></script>
+    <script src="/javascripts/dash.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
+   
+</body>
+</html>

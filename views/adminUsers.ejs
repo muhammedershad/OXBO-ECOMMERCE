@@ -1,0 +1,142 @@
+<!-- <!DOCTYPE html> -->
+<!--=== Coding by CodingLab | www.codinglabweb.com === -->
+<!-- <html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> -->
+    
+    <!----======== CSS ======== -->
+    <!-- <link rel="stylesheet" href="/css/dash.css"> -->
+     
+    <!----===== Iconscout CSS ===== -->
+    <!-- <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css">
+
+    <title>Admin Dashboard Panel</title> 
+</head>
+<body>
+    <nav>
+        <div class="logo-name">
+            <div class="logo-image">
+                <img src="images/logo.png" alt="">
+            </div>
+
+            <span class="logo_name">CodingLab</span>
+        </div>
+
+        <div class="menu-items">
+            <ul class="nav-links p-0 m-0 ">
+                <li><a href="/admin">
+                    <i class="uil uil-estate"></i>
+                    <span class="link-name">Dahsboard</span>
+                </a></li>
+                <li><a href="/admin/users">
+                    <i class="uil uil-files-landscapes"></i>
+                    <span class="link-name">Users</span>
+                </a></li>
+                <li><a href="/admin/category">
+                    <i class="uil uil-chart"></i>
+                    <span class="link-name">Catogorys</span>
+                </a></li>
+                <li><a href="/admin/product">
+                    <i class="uil uil-thumbs-up"></i>
+                    <span class="link-name">Products</span>
+                </a></li>
+                <li><a href="#">
+                    <i class="uil uil-comments"></i>
+                    <span class="link-name">Comment</span>
+                </a></li>
+                <li><a href="#">
+                    <i class="uil uil-share"></i>
+                    <span class="link-name">Share</span>
+                </a></li>
+            </ul>
+            
+            <ul class="logout-mode p-0 m-0">
+                <li><a href="#">
+                    <i class="uil uil-signout"></i>
+                    <button id="nothing-btn" onclick="logout()" class="link-name">Logout</button>
+                </a></li>
+
+                <li class="mode">
+                    <a href="#">
+                        <i class="uil uil-moon"></i>
+                    <span class="link-name">Dark Mode</span>
+                </a>
+
+                <div class="mode-toggle">
+                  <span class="switch"></span>
+                </div>
+            </li>
+            </ul>
+        </div>
+    </nav>
+
+    <section class="dashboard">
+        <div class="top shadow">
+            <i class="uil uil-bars sidebar-toggle"></i>
+
+            <div class="search-box">
+                <i class="uil uil-search"></i>
+                <input type="text" placeholder="Search here...">
+            </div>
+            
+            <img src="images/profile.jpg" alt="">
+        </div> -->
+
+
+
+<%- include('./partials/adminnav.ejs') %>
+
+        <div class="dash-content">
+            <div class="overview">
+                <div class="title">
+                    <i class="uil uil-tachometer-fast-alt"></i>
+                    <span class="text">Users</span>
+                </div>
+
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Email</th>
+                            <th>Phone Number</th>
+                            <th>Created</th>
+                            <th>Blocked</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% users.forEach(user => { %>
+                            <tr>
+                                <td><%= user.email %></td>
+                                <td><%= user.phoneNumber %></td>
+                                <td><%= user.created.toLocaleDateString() %></td>
+                                <td><%= user.Blocked ? 'True' : 'False' %></td>
+                                <td>
+                                    <button class="btn" id="categoryBtn" onclick="update('<%= user._id %>')" data-id="<%= user._id %>">
+                                        <%= user.Blocked ? 'Unblock' : 'Block' %>
+                                    </button>
+                                </td>
+                            </tr>
+                        <% }); %>
+                    </tbody>
+                </table>
+                
+            </div>
+
+            <!-- <div class="activity">
+                <div class="title">
+                    <i class="uil uil-clock-three"></i>
+                    <span class="text">Recent Activity</span>
+                </div>
+
+            </div> -->
+        </div>
+    </section>
+    <script>
+        
+    </script>
+    <script src="/javascripts/dash.js"></script>
+    <script src="/javascripts/usersTable.js"></script>
+</body>
+</html>
