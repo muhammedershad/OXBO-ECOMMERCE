@@ -10,6 +10,7 @@ const userRoute = require('./routes/user');
 const adminRoute = require('./routes/admin');
 const multerSetup = require('./middleware/multerSetup');
 
+
 const app = express();
 const PORT = process.env.PORT || 4000; 
 
