@@ -740,7 +740,8 @@ module.exports = {
                     discount : discount,
                     total : total,
                     products: [],
-                    active : false
+                    active : false,
+                    refunded : false
                 })
                 await user.save();
 
@@ -830,17 +831,21 @@ module.exports = {
         }
     },
 
-    orderListPage : async (req,res) => {
+    orderListPage : async (req,res,next) => {
         try {
             const email = req.session.user
             // console.log(email);
             
             const user = await userData.findOne({email : email})
             const orders = await orderData.find({user:user._id, active : true}).populate("products.product").sort({ orderDate: -1 })
-            // console.log(orders[0].products);
+            
             res.render('orderlist',{user,orders})
         } catch (error) {
-            console.log(error);
+            // console.log(error);
+            const err = new Error(error)
+            err.statusCode = 500
+            err.error = 'Some error occured in order list page loading'
+            return next(err)
         }
     },
 
@@ -869,6 +874,8 @@ module.exports = {
                 
                 subtotal += product.MRP * quantity;
             }
+
+            console.log(orders);
             res.render('userSide/orderDetails',{orders,subtotal})
         } catch (error) {
             console.log(error);
@@ -878,10 +885,19 @@ module.exports = {
     cancelOrder : async (req,res) => {
         try {
             const {orderId} = req.query
+            const {reason,orderStatus} = req.body
    
             const order = await orderData.findById(orderId)
-            order.orderStatus = 'Cancelled'
+            
+            if(orderStatus === 'Delivered'){
+                order.orderStatus = 'Return Requested'
+            } else {
+                order.orderStatus = 'Cancel Requested'
+            }
+
             order.changeDate = Date.now();
+            order.reason = reason
+
             await order.save();
             res.redirect(`/orderDetails?orderId=${orderId}`)
 
@@ -934,8 +950,13 @@ module.exports = {
             await user.save();
 
         } catch (error) {
-            console.log(error);
+            // console.log(error);
+            const err = new Error(error)
+            err.statusCode = 500
+            err.error = 'Error in confirm Order'
         }
     },
+
+   
 
 }

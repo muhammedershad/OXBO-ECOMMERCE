@@ -442,7 +442,9 @@ module.exports = {
             .populate("products.product")
             .populate("user")
             .sort({ orderDate: -1 });
-            // console.log(orders);
+
+            console.log(orders);
+
             res.render('adminOrder',{orders,orderStatus})
         } catch (error) {
             console.log(error);
@@ -454,9 +456,17 @@ module.exports = {
             const {orderId, status} = req.query;
 
             const order = await orderData.findById(orderId)
+            const user = await users.findById(order.user)
+
+            if((order.paymentMethod === 'onlinePayment' && status === 'Cancelled') || status === 'Returned'){
+                user.wallet += order.total;
+                order.refunded = true;
+            }
 
             order.orderStatus = status
+            order.changeDate = Date.now()
 
+            await user.save();
             await order.save();
             res.redirect('/admin/orderList')
 

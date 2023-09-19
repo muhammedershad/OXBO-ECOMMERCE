@@ -9,6 +9,7 @@ const connect = require('./models/config')
 const userRoute = require('./routes/user');
 const adminRoute = require('./routes/admin');
 const multerSetup = require('./middleware/multerSetup');
+const errorHandling = require('./middleware/errorHandling');
 
 
 const app = express();
@@ -40,6 +41,7 @@ app.set('view engine', 'ejs');
 
 app.use('/', userRoute);
 app.use('/admin',adminRoute);
-app.use('*', (req,res)=>{res.render('404')})
+app.use('*', errorHandling[404])
+app.use(errorHandling[500])
 
 app.listen(PORT , () => console.log(`server running in port ${PORT}`));

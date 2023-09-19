@@ -24,9 +24,9 @@
                             <% } %>" href="/admin/orderList?orderStatus=Delivered" href="#">Delivered </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link <% if (orderStatus === 'Cancelled') { %>
+                            <a class="nav-link <% if (orderStatus === 'Cancel Requested') { %>
                                 active
-                            <% } %>" href="/admin/orderList?orderStatus=Cancelled" href="#">Cancel Requested </a>
+                            <% } %>" href="/admin/orderList?orderStatus=Cancel Requested" href="#">Cancel Requested </a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link <% if (orderStatus === 'Cancelled') { %>
@@ -34,14 +34,14 @@
                             <% } %>" href="/admin/orderList?orderStatus=Cancelled" href="#">Cancelled </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link <% if (orderStatus === 'Shipping') { %>
+                            <a class="nav-link <% if (orderStatus === 'Return Requested') { %>
                                 active
-                            <% } %>" href="/admin/orderList?orderStatus=Shipping" href="#">Return Requested </a>
+                            <% } %>" href="/admin/orderList?orderStatus=Return Requested" href="#">Return Requested </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link <% if (orderStatus === 'Shipping') { %>
+                            <a class="nav-link <% if (orderStatus === 'Returned') { %>
                                 active
-                            <% } %>" href="/admin/orderList?orderStatus=Shipping" href="#">Returned </a>
+                            <% } %>" href="/admin/orderList?orderStatus=Returned" href="#">Returned </a>
                         </li>
                     </ul>
 
@@ -77,6 +77,7 @@
                                         <option class="dropdown-item" value="Shipping">Shipping</option>
                                         <option class="dropdown-item" value="Delivered">Delivered</option>
                                         <option class="dropdown-item" value="Cancelled">Cancelled</option>
+                                        <option class="dropdown-item" value="Returned">Returned</option>
                                         <!-- Add more options as needed -->
                                         </select>
                                     </td>

@@ -59,6 +59,14 @@ const orderSchema = new mongoose.Schema({
 
     changeDate : {
         type : Date
+    },
+
+    reason : {
+        type : String
+    },
+
+    refunded : {
+        type: Boolean
     }
 })
 
