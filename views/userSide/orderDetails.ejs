@@ -61,18 +61,22 @@
       </div>
     </div>
     <div class="col-md-9">
-        <div class="card-body border rounded mb-3 w-100">
+        <div class="card-body border  rounded mb-3 w-100">
             
-            <div class="card-body p-4 m-0 w-100">
+            <div class="card-body p-4 m-0 w-100 bg-white">
                 <div class="row p-3 bg-light mb-2">
                     <div class="col-6">
                         <h6 class="mb-2">Ordered date: <%= orders.orderDate.toLocaleDateString() %></h6>
                         <h6>
                             <% if (orders.orderStatus === 'Delivered') { %>
                                 Delivered on: <%= new Date(orders.orderDate.getTime() + 7 * 24 * 60 * 60 * 1000).toLocaleDateString() %>
+                            <% } else if(orders.orderStatus === 'Cancelled') { %>
+                                Cancelled Date: <%= orders.changeDate.toLocaleDateString() %>
+                            <% } else if(orders.orderStatus === 'returned') { %>
+                                Cancelled Date: <%= orders.changeDate.toLocaleDateString() %>
                             <% } else { %>
                                 Estimated delivery date: <%= new Date(orders.orderDate.getTime() + 7 * 24 * 60 * 60 * 1000).toLocaleDateString() %>
-                            <% } %>
+                            <% } %> 
                         </h6>
                     </div>
                     <div class="col-6 ">

@@ -432,12 +432,18 @@ module.exports = {
 
     orderListPage : async (req,res) => {
         try {
-            const orders = await orderData.find()
+            const {orderStatus} = req.query
+            let filter = {active:true}
+            if(orderStatus){
+                filter.orderStatus = orderStatus
+            }
+
+            const orders = await orderData.find(filter)
             .populate("products.product")
             .populate("user")
             .sort({ orderDate: -1 });
             // console.log(orders);
-            res.render('adminOrder',{orders})
+            res.render('adminOrder',{orders,orderStatus})
         } catch (error) {
             console.log(error);
         }

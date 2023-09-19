@@ -9,6 +9,7 @@ const categoryData = require('../models/category');
 const { response } = require('express');
 const orderData = require('../models/orders')
 const couponData = require('../models/coupon')
+const RazorPay = require('razorpay');
 
 
 async function sendOTP(email) {
@@ -60,6 +61,12 @@ async function sendOTP(email) {
         return { success: false, message: 'Failed to send OTP' };
     }
 }
+
+const instance = new RazorPay({
+    key_id: process.env.RAZORPAY_KEY_ID,
+    key_secret: process.env.RAZORPAY_KEY_SECRET,
+  });
+
 
 module.exports = {
 
@@ -172,7 +179,8 @@ module.exports = {
                     phoneNumber: userSession.phoneNumber,
                     password: userSession.password,
                     Blocked: false,
-                    created: Date()
+                    created: Date(),
+                    wallet: 0,
                     });
                     await newUser.save();
                     console.log('user data saved');
@@ -399,7 +407,7 @@ module.exports = {
                 };
             }
 
-            const perPage = 12; 
+            const perPage = 4; 
             const currentPage = parseInt(req.query.page) || 1; // Get the current page number from the query parameter
     
             // Calculate the skip value based on the current page and products per page
@@ -548,11 +556,13 @@ module.exports = {
     },
 
     cartPage : async (req,res) => {
+
         try {
+
             const email = req.session.user
             const user = await userData.findOne({email:email})
             const coupon = await couponData.find({ active: true, expiresAt: { $gt: Date.now() } });
-
+            
             // console.log(user);
             res.render('cart',{user,coupon})
         } catch (error) {
@@ -608,7 +618,7 @@ module.exports = {
         try {
             const email = req.session.user
             const couponAmount = req.session.coupon || 0.00;
-            console.log(couponAmount);
+            // console.log(couponAmount);
             const user = await userData.findOne({email:email});
             res.render('checkOut',{user,couponAmount})
         } catch (error) {
@@ -715,68 +725,105 @@ module.exports = {
 
     placeOrder : async (req,res) => {
         try {
-            const {paymentMethod,addressIndex,userId, discount, total} = req.body
+            const {walletSelected, paymentMethod,addressIndex,userId, discount, total} = req.body
             // console.log(paymentMethod,addressIndex,userId, discount, total);
-
+            console.log(req.body);
+            console.log(paymentMethod);
             const user = await userData.findOne({_id : userId});
 
-            const order = await new orderData({
-                user : user._id,
-                paymentMethod : paymentMethod,
-                orderStatus : 'Order confirmed',
-                orderDate : Date.now(),
-                address : user.address[addressIndex],
-                discount : discount,
-                total : total,
-                products: []
-            })
-            await user.save();
+                const order = await new orderData({
+                    user : user._id,
+                    paymentMethod : paymentMethod,
+                    orderStatus : 'Order confirmed',
+                    orderDate : Date.now(),
+                    address : user.address[addressIndex],
+                    discount : discount,
+                    total : total,
+                    products: [],
+                    active : false
+                })
+                await user.save();
 
-            // for (let index = 0; index < user.cart.length; index++) {
-            //     const cartItem = user.cart[index];
-            //     const productData = {
-            //       product: cartItem.product._id,
-            //       quantity: cartItem.quantity,
-            //       size: cartItem.size,
-            //     };
-            //     order.products.push(productData); 
-            //     const product = await productData.findById(cartItem.product._id)
-            //     console.log(product);
-            //     product.stock.(cartItem.size) = product.stock.(cartItem.size) - cartItem.quantity
-            //     product.save()
-            // }
+                for (let index = 0; index < user.cart.length; index++) {
+                    const cartItem = user.cart[index];
+                    const productDatas = {
+                      product: cartItem.product._id,
+                      quantity: cartItem.quantity,
+                      size: cartItem.size,
+                    };
+                    order.products.push(productDatas);
+                  
+                    // Assuming you have a Mongoose model for your products called "Product"
+                    const product = await productData.findById(cartItem.product._id);
+                  
+                    if (product) {
+                    //   console.log(product);
+                  
+                      // Dynamically update the stock based on cartItem.size
+                      product.stock[cartItem.size] -= cartItem.quantity;
+                  
+                      // Save the updated product
+                      await product.save();
+                    }
+                  }
+                  
+                await order.save();
+    
+    
+                delete req.session.coupon
 
-            for (let index = 0; index < user.cart.length; index++) {
-                const cartItem = user.cart[index];
-                const productDatas = {
-                  product: cartItem.product._id,
-                  quantity: cartItem.quantity,
-                  size: cartItem.size,
-                };
-                order.products.push(productDatas);
-              
-                // Assuming you have a Mongoose model for your products called "Product"
-                const product = await productData.findById(cartItem.product._id);
-              
-                if (product) {
-                //   console.log(product);
-              
-                  // Dynamically update the stock based on cartItem.size
-                  product.stock[cartItem.size] -= cartItem.quantity;
-              
-                  // Save the updated product
-                  await product.save();
+            if(paymentMethod === 'cashOnDelivery'){
+                
+                order.active = true;
+                await order.save();
+                user.cart.splice(0);
+                await user.save();
+    
+                res.json({ success: true });
+
+            }  else if (paymentMethod === 'onlinePayment') {
+
+                let amount = 0
+                if(walletSelected){
+                    amount = total - user.wallet
+                    if (amount < 0){
+                        amount = 0;
+                    } else {
+                        amount = amount * 100;
+                    }
+                } else {
+                    amount = total*100
                 }
-              }
-              
-            await order.save();
 
-            user.cart.splice(0);
-            await user.save();
+                if (amount === 0){
+                    user.wallet = user.wallet - total
+                    order.active = true;
+                    await order.save();
+                    user.cart.splice(0);
+                    await user.save();
+                    res.json({ success: true });
+                }
 
-            delete req.session.coupon
+                
+                let options = {
+                    amount: amount,  // amount in the smallest currency unit
+                    currency: "INR",
+                    receipt: order._id
+                  };
 
-            res.json({ success: true });
+                  instance.orders.create(options, (err, order) => {
+                    if(!err){
+
+                        res.status(200).json({order})
+                        console.log(order);
+                    } else {
+                        console.log(err);
+                    }
+                });
+            }
+
+
+            
 
         } catch (error) {
             console.log(error);
@@ -789,7 +836,7 @@ module.exports = {
             // console.log(email);
             
             const user = await userData.findOne({email : email})
-            const orders = await orderData.find({user:user._id}).populate("products.product").sort({ orderDate: -1 })
+            const orders = await orderData.find({user:user._id, active : true}).populate("products.product").sort({ orderDate: -1 })
             // console.log(orders[0].products);
             res.render('orderlist',{user,orders})
         } catch (error) {
@@ -834,6 +881,7 @@ module.exports = {
    
             const order = await orderData.findById(orderId)
             order.orderStatus = 'Cancelled'
+            order.changeDate = Date.now();
             await order.save();
             res.redirect(`/orderDetails?orderId=${orderId}`)
 
@@ -869,5 +917,25 @@ module.exports = {
           console.error(error);
           res.status(500).json({ message: 'Server error' });
         }
-      }
+    },
+
+    confirmOrder : async (req,res) => {
+        try {
+            const {response, orderId} = req.query;
+            const email = req.session.user
+
+            const oneOrder = await orderData.findOne({_id : orderId})
+            oneOrder.active = true
+            oneOrder.save();
+
+            const user = await userData.findOne({email: email});
+            user.cart.splice(0);
+            user.wallet = 0;
+            await user.save();
+
+        } catch (error) {
+            console.log(error);
+        }
+    },
+
 }

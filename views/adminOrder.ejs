@@ -5,126 +5,45 @@
                     <div class="title d-flex justify-content-center" id="title-div">
                         <!-- <i class="uil uil-tachometer-fast-alt"></i> -->
                         <span class="text d-flex justify-content-center">Order List</span>
-
-                        <!-- Button trigger modal -->
-                        <!-- <button type="button" id="categoryBtn" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                            Add Product
-                        </button> -->
-                        
-                        <!-- Modal -->
-                        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                            <div class="modal-dialog modal-dialog-centered">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <h1 class="modal-title fs-5" id="exampleModalLabel">Add Product</h1>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                    </div>
-                                    <form action="/admin/addProduct" method="post" enctype="multipart/form-data">
-                                        <div class="modal-body">
-                                            <input type="text" class="form-control my-2" name="title" required placeholder="Enter product name">
-                                            <input type="text" class="form-control my-2" name="brand" required placeholder="Enter product brand">
-                                            <label for="gender">Select Gender : </label>
-                                            <div class="form-check form-check-inline">
-                                                <input class="form-check-input" type="radio" name="gender" id="maleRadio" value="Male">
-                                                <label class="form-check-label" for="inlineRadio1">Male</label>
-                                            </div>
-                                            <div class="form-check form-check-inline">
-                                                <input class="form-check-input" type="radio" name="gender" id="femaleRadio" value="Female">
-                                                <label class="form-check-label" for="inlineRadio2">Female</label>
-                                            </div>
-                                            <!-- <div class="form-group">
-                                                <label for="gender">Select Gender:</label>
-                                                <input type="radio" name="gender" value="Male" id="maleRadio"> Male
-                                                <input type="radio" name="gender" value="Female" id="femaleRadio"> Female
-                                            </div> -->
-                                            <div class="form-group">
-                                                <label for="category">Select Category:</label>
-                                                <select class="form-control" id="categorySelect" name="categoryId">
-                                                    <!-- Options will be populated dynamically -->
-                                                </select>
-                                            </div>
-                                            <div class="form-group">
-                                                <label for="subcategory">Select Subcategory:</label>
-                                                <select class="form-control" id="subcategorySelect" name="subcategory">
-                                                    <!-- Options will be populated dynamically -->
-                                                </select>
-                                            </div>
-                                            <div>
-                                                <label for="">Select sizes : </label>
-                                                <div class="form-check form-check-inline">
-                                                    <input class="form-check-input" type="checkbox" name="sizes" id="S" value="S">
-                                                    <label class="form-check-label" for="inlineCheckbox1">S</label>
-                                                </div>
-                                                <div class="form-check form-check-inline">
-                                                    <input class="form-check-input" type="checkbox" name="sizes" id="M" value="M">
-                                                    <label class="form-check-label" for="inlineCheckbox2">M</label>
-                                                </div>
-                                                <div class="form-check form-check-inline">
-                                                    <input class="form-check-input" type="checkbox" name="sizes" id="L" value="L">
-                                                    <label class="form-check-label" for="inlineCheckbox2">L</label>
-                                                </div>
-                                                <div class="form-check form-check-inline">
-                                                    <input class="form-check-input" type="checkbox" name="sizes" id="XL" value="XL">
-                                                    <label class="form-check-label" for="inlineCheckbox2">XL</label>
-                                                </div>
-                                                <div class="form-check form-check-inline">
-                                                    <input class="form-check-input" type="checkbox" name="sizes" id="XXL" value="XXL">
-                                                    <label class="form-check-label" for="inlineCheckbox2">XXL</label>
-                                                </div>
-                                                <div class="input-group mb-3">
-                                                    <input type="file" name="images" required class="form-control" multiple id="inputGroupFile02">
-                                                    <label class="input-group-text" for="inputGroupFile02">Upload</label>
-                                                </div>
-                                            </div>
-                                            <div class="row mb-3">
-                                                <div class="col-md-4">
-                                                    <input type="text" class="form-control" name="purchaseRate" placeholder="Purchase Price">
-                                                </div>
-                                                <div class="col-md-4">
-                                                    <input type="text" class="form-control" name="MRP" required placeholder="MRP">
-                                                </div>
-                                                <div class="col-md-4">
-                                                    <input type="text" class="form-control" name="discount" placeholder="Discount">
-                                                </div>
-                                            </div>
-                                            <div class="mb-3">
-                                                <textarea class="form-control" id="description" required rows="3" placeholder="Product Description"></textarea>
-                                            </div>
-                                            <div class="row mb-3">
-                                                <div class="col-md-6">
-                                                    <select class="form-select" required name="paymentType" aria-label="Payment Type">
-                                                        <option selected disabled>Select Payment Type</option>
-                                                        <option value="cash">Cash on Delivery</option>
-                                                        <option value="online">Online Payment</option>
-                                                        <option value="online">Both</option>
-                                                    </select>
-                                                </div>
-                                                <div class="col-md-6">
-                                                    <input type="text" class="form-control" name="shippingCharge" placeholder="Shipping Charge">
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <input type="number" class="form-control" name="stock" placeholder="Add Stock">
-                                            </div>
-                                            <!-- <div class="row mb-3">
-                                                <div class="col-md-12">
-                                                    <label for="categories">Select Categories:</label>
-                                                    <select class="form-select" name="categories" id="categories" aria-label="Select Categories" multiple> -->
-                                                        <!-- Options will be dynamically updated using JavaScript -->
-                                                    <!-- </select>
-                                                </div>
-                                            </div> -->
-                                        </div>
-                                        <div class="modal-footer">
-                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                            <button type="submit" class="btn btn-primary">Add Product</button>
-                                        </div>
-                                        
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
                     </div>
+
+                    <ul class="nav nav-tabs mb-2">
+                        <li class="nav-item">
+                            <a class="nav-link <% if (orderStatus === undefined) { %>
+                                active
+                            <% } %>" aria-current="page" href="/admin/orderList">All Oders</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link <% if (orderStatus === 'Shipping') { %>
+                                active
+                            <% } %>" href="/admin/orderList?orderStatus=Shipping">Shipped </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link <% if (orderStatus === 'Delivered') { %>
+                                active
+                            <% } %>" href="/admin/orderList?orderStatus=Delivered" href="#">Delivered </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link <% if (orderStatus === 'Cancelled') { %>
+                                active
+                            <% } %>" href="/admin/orderList?orderStatus=Cancelled" href="#">Cancel Requested </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link <% if (orderStatus === 'Cancelled') { %>
+                                active
+                            <% } %>" href="/admin/orderList?orderStatus=Cancelled" href="#">Cancelled </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link <% if (orderStatus === 'Shipping') { %>
+                                active
+                            <% } %>" href="/admin/orderList?orderStatus=Shipping" href="#">Return Requested </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link <% if (orderStatus === 'Shipping') { %>
+                                active
+                            <% } %>" href="/admin/orderList?orderStatus=Shipping" href="#">Returned </a>
+                        </li>
+                    </ul>
 
                     <table class="table">
                         <thead>
@@ -137,10 +56,6 @@
                                 <th>Total Amount</th>
                                 <th>status</th>
                                 <th>Action</th>
-                                <!-- <th>Sizes</th>
-                                <th>Status</th>
-                                <th>Edit</th>
-                                <th>Actions</th> -->
                             </tr>
                         </thead>
                         <tbody>
@@ -186,60 +101,15 @@
                                             </div>
                                         </div>
                                     </div>
-
-                                    <td>
-                                        <!-- Button trigger modal -->
-
-                                        
-                                        <!-- Modal -->
-                                        <!-- <div class="modal fade" id="editCategoryModal<%=  %>" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                            <div class="modal-dialog modal-dialog-centered">
-                                                <div class="modal-content">
-                                                    <div class="modal-header">
-                                                        <h1 class="modal-title fs-5" id="exampleModalLabel">Edit Category</h1>
-                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                                    </div>
-                                                    <form action="/admin/updatCategory/<%= %>" method="post">
-                                                        <div class="modal-body">
-                                                            <input type="text" class="form-control my-2" name="categoryName" placeholder="Enter category" value="<%=  %>">
-                                                            <label for="">Select the Gender : </label>
-                                                            <div class="form-check form-check-inline">
-                                                                <input class="form-check-input" type="radio" id="male" name="gender" value="Male" <%= %>>
-                                                                <label class="form-check-label" for="male">Male</label>
-                                                            </div>
-                                                            <div class="form-check form-check-inline">
-                                                                <input class="form-check-input" type="radio" id="female" name="gender" value="Female" <%= %>>
-                                                                <label class="form-check-label" for="female">Female</label>
-                                                            </div>
-                                                        </div>
-                                                        <div class="modal-footer">
-                                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                                            <button type="submit" class="btn btn-primary">Edit Category</button>
-                                                        </div>
-                                                    </form>
-                                                </div>
-                                            </div>
-                                        </div> -->
-                                    </td>
-                                   
                                 </tr>
                             <% }); %>
                         </tbody>
                     </table>
-
-                    
                 </div>
-
-                <!-- <div class="activity">
-                    <div class="title">
-                        <i class="uil uil-clock-three"></i>
-                        <span class="text">Recent Activity</span>
-                    </div>
-
-                </div> -->
-            </div>
-            
+            </div>    
         </section>
+
+
         <script>
              
             function confirm(orderId){

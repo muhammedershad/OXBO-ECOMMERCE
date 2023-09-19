@@ -4,170 +4,181 @@
 
 <section class=" my-5">
     <div class="container">
-      <div class="row">
-        <!-- cart -->
-        <div class="col-lg-9">
-          <div class="card border shadow-0">
-            <div class="m-4">
-              
-              <% if (user.cart.length === 0) { %>
-                <div class="container">
-                  <h3>Your Shopping cart is empty!</h3>
-                </div>
-              <% } else { %>
-                <h4 class="card-title mb-4">Your shopping cart</h4>
-                <!-- Render the cart items here -->
-              <% } %>
-
-              <% user.cart.forEach((product,index) => { %>
-                <div class="row gy-3 mb-4">
-                    <div class="col-lg-5">
-                      <div class="me-lg-5">
-              
-                        <!-- <a href="/product?productId=<%= product.product._id %>"> -->
-                          <div class="d-flex">
-                            <img src="/<%= product.product.image[0] %>" class="border rounded me-3" style="width: 96px; height: 96px;" />
-                            <div class="">
-                              <a href="/product?productId=<%= product.product._id %>" class="nav-link"><%= product.product.title %></a>
-                              <p class="text-muted mb-1"><%= product.product.brand %></p>
-                              <p class="text-muted">Size : <%= product.size %></p>
-                            </div>
-                          </div>
-                        <!-- </a>
-                         -->
-                      </div>
-                      
-                    </div>
-                    <div  class="col-md-3 col-lg-3 col-xl-2 d-flex mt-4">
-                        <button onclick="minusupdateTotal(this,'quantity_<%= index %>','<%= product.product.MRP %>', '<%= index %>','<%= user._id %>','<%= index %>')" style="height: 40px;width: 40px; border-radius: 5px;" class="btn px-2">
-                          -
-                        </button>
-    
-                        <input style="height: 40px; width: 50px;" readonly id="quantity_<%= index %>" min="1" max="<%= product.product.stock[product.size] %>" name="quantity" value="<%= product.quantity %>" type="number" class="form-control form-control-sm" />
-    
-                        <button onclick="plusupdateTotal(this,'quantity_<%= index %>','<%= product.product.MRP %>', '<%= index %>','<%= user._id %>','<%= index %>')" style="height: 40px;width: 40px; border-radius: 5px;" class="btn  px-2">
-                          +
-                        </button>
-                    </div>
-                    <div class="col-lg-2 col-sm-6 col-6 d-flex flex-row flex-lg-column flex-xl-row text-nowrap">
-                      
-                      <div class="d-block ml-5 pl-">
-                        
-                        <% const initialValue = product.product.MRP * product.quantity; %>
-                        
-                        <% subtotalPrice = subtotalPrice + initialValue; %>
-
-                        <text class="h6" id="totalprice_<%= index %>"> ₹<%= product.subTotal %>.00 </text> <br />
-                        <small class="text-muted text-nowrap" id="productprice_<%= product.product._id %>">₹<%= product.product.MRP %>.00 / per item </small>
-                      </div>
-                    </div>
-                    
-                    
-                    <div class="col-lg col-sm-6 d-flex justify-content-sm-center justify-content-md-start justify-content-lg-center justify-content-xl-end mb-2">
-                      <div class="float-md-end">
-                        <a  href="#">
-                            <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 21 19">
-                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 4C5.5-1.5-1.5 5.5 4 11l7 7 7-7c5.458-5.458-1.542-12.458-7-7Z"/>
-                            </svg>
-                        </a>
-                        <a href="" onclick="updateCart('<%= user._id %>','<%= index %>')" class="btn btn-light border text-danger icon-hover-danger"> Remove</a>
-                      </div>
-                    </div>
-                  </div>
-              <% }) %>
-  
-              
-            </div>
-  
-            <!-- <div class="border-top pt-4 mx-4 mb-4">
-              <p><i class="fas fa-truck text-muted fa-lg"></i> Free Delivery within 1-2 weeks</p>
-              <p class="text-muted">
-                Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-                aliquip
-              </p>
-            </div> -->
+      <% if (user.cart.length === 0) { %>
+        <div class="container card py-5 d-flex justify-content-center align-items-center">
+          <div class="text-center ">
+            <h3>Your Shopping cart is empty!</h3>
           </div>
         </div>
-        <!-- cart -->
-        <!-- summary -->
-        <div class="col-lg-3">
-          <div class="card mb-3 border shadow-0">
-            <div class="card-body">
-                <div class="form-group">
-                  <label class="form-label">Have coupon?</label>
-                  <div class="input-group">
-                    <input type="text" class="form-control border" id="couponInput" name="" placeholder="Coupon code" />
-                    <button class="btn btn-light border" onclick="couponApply()">Apply</button>
+      <% } else { %>
+        <!-- <h4 class="card-title mb-4">Your shopping cart</h4> -->
+        <div class="row">
+          <!-- cart -->
+          <div class="col-lg-9">
+            <div class="card border shadow-0">
+              <div class="m-4">
+                
+                <% if (user.cart.length === 0) { %>
+                  <div class="container">
+                    <!-- <h3>Your Shopping cart is empty!</h3> -->
                   </div>
-                  <small class="text-danger my-1" id="couponError"></small>
-                  <div class="d-flex justify-content-end my-3">
-                    <button style="border:none; background-color: transparent;" class="" id="availableCoupon" type="button" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                      Available Coupons
-                    </button>
-                  </div>
-                  <!-- modal -->
-                  <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-                      <div class="modal-content">
-                        <div class="modal-header">
-                          <h1 class="modal-title fs-5" id="exampleModalLabel"> Available Coupons</h1>
-                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body">
-                          <% coupon.forEach(coupon => { %>
-                            <div class="card mb-3">
-                              <div class="card-body">
-                                  <div class="d-flex justify-content-between mb-2">
-                                    <input type="text" value="<%= coupon.code %>" id="couponCodeField" hidden>
-                                    <h5 class="card-title">Coupon code : <%= coupon.code %></h5>
-                                    <button id="copyButton<%= coupon.code %>" type="button" onclick="copy('<%= coupon.code %>')" style="border: 0;background-color: rgb(206, 204, 202); border-radius: 10px;" class=" p-1 copy-button">Copy</button>
-                                  </div>
-                                  <p class="card-text">Purchase for <%= coupon.minPurchaseAmount %> or more and apply this coupon to get <%= coupon.amount %> <%= coupon.type %> off.</p>
+                <% } else { %>
+                  <h4 class="card-title mb-4">Your shopping cart</h4>
+                  <!-- Render the cart items here -->
+                <% } %>
+  
+                <% user.cart.forEach((product,index) => { %>
+                  <div class="row gy-3 mb-4">
+                      <div class="col-lg-5">
+                        <div class="me-lg-5">
+                
+                          <!-- <a href="/product?productId=<%= product.product._id %>"> -->
+                            <div class="d-flex">
+                              <img src="/<%= product.product.image[0] %>" class="border rounded me-3" style="width: 96px; height: 96px;" />
+                              <div class="">
+                                <a href="/product?productId=<%= product.product._id %>" class="nav-link"><%= product.product.title %></a>
+                                <p class="text-muted mb-1"><%= product.product.brand %></p>
+                                <p class="text-muted">Size : <%= product.size %></p>
                               </div>
-                          </div>
-                          <% }) %>
+                            </div>
+                          <!-- </a>
+                           -->
                         </div>
-                        <div class="modal-footer">
-                          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                          <!-- <button type="button" class="btn btn-primary">Save changes</button> -->
+                        
+                      </div>
+                      <div  class="col-md-3 col-lg-3 col-xl-2 d-flex mt-4">
+                          <button onclick="minusupdateTotal(this,'quantity_<%= index %>','<%= product.product.MRP %>', '<%= index %>','<%= user._id %>','<%= index %>')" style="height: 40px;width: 40px; border-radius: 5px;" class="btn px-2">
+                            -
+                          </button>
+      
+                          <input style="height: 40px; width: 50px;" readonly id="quantity_<%= index %>" min="1" max="<%= product.product.stock[product.size] %>" name="quantity" value="<%= product.quantity %>" type="number" class="form-control form-control-sm" />
+      
+                          <button onclick="plusupdateTotal(this,'quantity_<%= index %>','<%= product.product.MRP %>', '<%= index %>','<%= user._id %>','<%= index %>')" style="height: 40px;width: 40px; border-radius: 5px;" class="btn  px-2">
+                            +
+                          </button>
+                      </div>
+                      <div class="col-lg-2 col-sm-6 col-6 d-flex flex-row flex-lg-column flex-xl-row text-nowrap">
+                        
+                        <div class="d-block ml-5 pl-">
+                          
+                          <% const initialValue = product.product.MRP * product.quantity; %>
+                          
+                          <% subtotalPrice = subtotalPrice + initialValue; %>
+  
+                          <text class="h6" id="totalprice_<%= index %>"> ₹<%= product.subTotal %>.00 </text> <br />
+                          <small class="text-muted text-nowrap" id="productprice_<%= product.product._id %>">₹<%= product.product.MRP %>.00 / per item </small>
+                        </div>
+                      </div>
+                      
+                      
+                      <div class="col-lg col-sm-6 d-flex justify-content-sm-center justify-content-md-start justify-content-lg-center justify-content-xl-end mb-2">
+                        <div class="float-md-end">
+                          <a  href="#">
+                              <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 21 19">
+                                  <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 4C5.5-1.5-1.5 5.5 4 11l7 7 7-7c5.458-5.458-1.542-12.458-7-7Z"/>
+                              </svg>
+                          </a>
+                          <a href="" onclick="updateCart('<%= user._id %>','<%= index %>')" class="btn btn-light border text-danger icon-hover-danger"> Remove</a>
                         </div>
                       </div>
                     </div>
-                  </div>
-
-                </div>
+                <% }) %>
+    
+                
+              </div>
+    
+              <!-- <div class="border-top pt-4 mx-4 mb-4">
+                <p><i class="fas fa-truck text-muted fa-lg"></i> Free Delivery within 1-2 weeks</p>
+                <p class="text-muted">
+                  Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
+                  aliquip
+                </p>
+              </div> -->
             </div>
           </div>
-          <div class="card shadow-0 border">
-            <div class="card-body">
-              <div class="d-flex justify-content-between">
-                <p class="mb-2">Total price:</p>
-                <p class="mb-2" id="subTotal">₹<%= subtotalPrice.toFixed(2) %></p>
-              </div>
-              <div class="d-flex justify-content-between">
-                <p class="mb-2">Discount:</p>
-                <p class="mb-2 text-success"id="discount">-₹00.00</p>
-              </div>
-              <div class="d-flex justify-content-between">
-                <p class="mb-2">Delivery:</p>
-                <p class="mb-2" id="deliveryCharge">₹40.00</p>
-              </div>
-              <hr />
-              <% totalPrice = subtotalPrice + 40 %>
-              <div class="d-flex justify-content-between">
-                <p class="mb-2">Total price:</p>
-                <p class="mb-2 fw-bold" id="total">₹<%= totalPrice.toFixed(2) %></p>
-              </div>
+          <!-- cart -->
+          <!-- summary -->
+          <div class="col-lg-3">
+            <div class="card mb-3 border shadow-0">
+              <div class="card-body">
+                  <div class="form-group">
+                    <label class="form-label">Have coupon?</label>
+                    <div class="input-group">
+                      <input type="text" class="form-control border" id="couponInput" name="" placeholder="Coupon code" />
+                      <button class="btn btn-light border" onclick="couponApply()">Apply</button>
+                    </div>
+                    <small class="text-danger my-1" id="couponError"></small>
+                    <div class="d-flex justify-content-end my-3">
+                      <button style="border:none; background-color: transparent;" class="" id="availableCoupon" type="button" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                        Available Coupons
+                      </button>
+                    </div>
+                    <!-- modal -->
+                    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                      <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h1 class="modal-title fs-5" id="exampleModalLabel"> Available Coupons</h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                          </div>
+                          <div class="modal-body">
+                            <% coupon.forEach(coupon => { %>
+                              <div class="card mb-3">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between mb-2">
+                                      <input type="text" value="<%= coupon.code %>" id="couponCodeField" hidden>
+                                      <h5 class="card-title">Coupon code : <%= coupon.code %></h5>
+                                      <button id="copyButton<%= coupon.code %>" type="button" onclick="copy('<%= coupon.code %>')" style="border: 0;background-color: rgb(206, 204, 202); border-radius: 10px;" class=" p-1 copy-button">Copy</button>
+                                    </div>
+                                    <p class="card-text">Purchase for <%= coupon.minPurchaseAmount %> or more and apply this coupon to get <%= coupon.amount %> <%= coupon.type %> off.</p>
+                                </div>
+                            </div>
+                            <% }) %>
+                          </div>
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <!-- <button type="button" class="btn btn-primary">Save changes</button> -->
+                          </div>
+                        </div>
+                      </div>
+                    </div>
   
-              <div class="mt-3">
-                <a href="/checkout" onclick="checkout()" id="purchaseButton" class="btn  w-100 shadow-0 mb-2" <%= user.cart.length === 0 ? 'disabled' : '' %> > Make Purchase </a>
-                <!-- <a href="#" class="btn btn-light w-100 border mt-2"> Back to shop </a> -->
+                  </div>
+              </div>
+            </div>
+            <div class="card shadow-0 border">
+              <div class="card-body">
+                <div class="d-flex justify-content-between">
+                  <p class="mb-2">Total price:</p>
+                  <p class="mb-2" id="subTotal">₹<%= subtotalPrice.toFixed(2) %></p>
+                </div>
+                <div class="d-flex justify-content-between">
+                  <p class="mb-2">Discount:</p>
+                  <p class="mb-2 text-success"id="discount">-₹00.00</p>
+                </div>
+                <div class="d-flex justify-content-between">
+                  <p class="mb-2">Delivery:</p>
+                  <p class="mb-2" id="deliveryCharge">₹40.00</p>
+                </div>
+                <hr />
+                <% totalPrice = subtotalPrice + 40 %>
+                <div class="d-flex justify-content-between">
+                  <p class="mb-2">Total price:</p>
+                  <p class="mb-2 fw-bold" id="total">₹<%= totalPrice.toFixed(2) %></p>
+                </div>
+    
+                <div class="mt-3">
+                  <a href="/checkout" onclick="checkout()" id="purchaseButton" class="btn  w-100 shadow-0 mb-2" <%= user.cart.length === 0 ? 'disabled' : '' %> > Make Purchase </a>
+                  <!-- <a href="#" class="btn btn-light w-100 border mt-2"> Back to shop </a> -->
+                </div>
               </div>
             </div>
           </div>
+          <!-- summary -->
         </div>
-        <!-- summary -->
-      </div>
+        <!-- Render the cart items here -->
+      <% } %>
+      
     </div>
   </section>
   <!-- cart + summary -->

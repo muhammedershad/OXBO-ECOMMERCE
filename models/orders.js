@@ -51,6 +51,14 @@ const orderSchema = new mongoose.Schema({
 
     total : {
         type : Number
+    },
+
+    active : {
+        type : Boolean
+    },
+
+    changeDate : {
+        type : Date
     }
 })
 

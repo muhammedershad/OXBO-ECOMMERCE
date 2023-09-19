@@ -50,7 +50,10 @@ router.get('/resendOTP',homeControllers.resendOTP);
 router.get('/check-coupoon', userAuth.auth, coupon.verifyCoupon)
 
 router.get('/orderDetails',userAuth.auth,homeControllers.OrderDetailsPage);
-router.post('/cancelOrder',userAuth.auth,homeControllers.cancelOrder)
+router.post('/cancelOrder',userAuth.auth,homeControllers.cancelOrder);
+
+router.get('/confirmOrder',userAuth.auth,homeControllers.confirmOrder)
+
 
 
 

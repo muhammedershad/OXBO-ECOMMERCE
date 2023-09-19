@@ -75,7 +75,10 @@ const userSchema = new mongoose.Schema({
             ref: 'product',
             required: true,
         }
-    ]
+    ],
+    wallet: {
+        type : Number
+    }
 
 })
 

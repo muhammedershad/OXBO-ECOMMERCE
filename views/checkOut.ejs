@@ -284,7 +284,7 @@
         </div>
         <div class="col-lg-3">
 
-          <div class="card shadow-0 border mb-2">
+          <div class="card shadow-0 border mb-3">
             <div class="card-body">
               <div class="d-flex justify-content-between">
                 <p class="mb-2">Total price:</p>
@@ -306,14 +306,28 @@
               <hr>
               <h6 class="mb-3">Select Payment Method</h6>
               <div class="form-check">
-                <input class="form-check-input" type="radio" name="paymentMethod" value="cashOnDelivery" id="cashOnDelivery" checked>
+                <input class="form-check-input" type="radio" onchange="showWalletPay()" name="paymentMethod" value="cashOnDelivery" id="cashOnDelivery" checked>
                 <label class="form-check-label" for="cashOnDelivery">Cash on Delivery</label>
               </div>
-              <div class="form-check">
-                <input class="form-check-input" type="radio" name="paymentMethod" value="onlinePayment" id="onlinePayment">
+              <div class="form-check mb-2">
+                <input class="form-check-input" onchange="showWalletPay()" type="radio" name="paymentMethod" value="onlinePayment" id="onlinePayment">
                 <label class="form-check-label" for="onlinePayment">Online Payment</label>
               </div>
-              <div class="mt-3">
+              <div class="form-check mb-2" style="display: none" id="walletPay">
+                <input class="form-check-input" name="wallet" onchange="showGrnadTotal('<%= user.wallet %>','<%= totalPrice %>')" type="checkbox" id="payWithWallet">
+                <label class="form-check-label d-flex justify-content-between" for="payWithWallet">
+                  <div>Pay with Wallet</div>
+                  <div>₹<%= user.wallet %>.00</div>
+                </label>
+              </div>
+              <div class="" style="display: none;" id="grandTotal">
+                <hr>
+                <div class="d-flex justify-content-between">
+                  <p class="mb-2">Grand Total:</p>
+                  <p class="mb-2 fw-bold" id="grandTotalField">₹<%= totalPrice.toFixed(2) %></p>
+                </div>
+              </div>
+
                 <a id="makePurchaseButton" class="btn w-100 shadow-0 mb-2"> Make Purchase </a>
                 <!-- <button id="makePurchaseButton" class="btn w-100 shadow-0 mb-2"> Make Purchase </button> -->
 
@@ -323,7 +337,7 @@
           </div>
             
           
-            <div class="card mb-3 border shadow-0">
+            <!-- <div class="card mb-3 border shadow-0">
               <% user.cart.forEach(product => { %>
                 <div class="card-body row mb-0">
                   <div class="col-3 mb-0 " >
@@ -340,7 +354,7 @@
               </div>
           </div>
               <% }) %>
-            </div>
+            </div> -->
           
         </div>
         <!-- summary -->
@@ -364,12 +378,11 @@
       </div>
     </div>
     <input type="hidden" id="userId" value="<%= user._id %>">
-    <div class="modal fade" id="exampleModal1" tabindex="-1" aria-labelledby="exampleModalLabel"
-            aria-hidden="true">
+    <div class="modal fade" id="exampleModal1" tabindex="-1" data-bs-backdrop="static" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog">
               <div class="modal-content">
                 <div class="modal-header border-bottom-0">
-                  <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
+                 
                 </div>
                 <div class="modal-body text-start text-black p-4">
                   <!-- <h5 class="modal-title text-uppercase mb-5" id="exampleModalLabel">Johnatan Miller</h5> -->
@@ -412,11 +425,45 @@
             </div>
           </div>
   </section>
-
+  <!-- <button id="rzp-button1">Pay with Razorpay</button> -->
   
 
   <%- include('./partials/footer.ejs') %>
   <script>
+
+
+function showWalletPay() {
+  let cashOnDeliveryRadio = document.getElementById("cashOnDelivery");
+    let  onlinePaymentRadio = document.getElementById("onlinePayment");
+    let walletPayDiv = document.getElementById("walletPay");
+    let grandTotalDiv = document.getElementById("grandTotal");
+
+    if (onlinePaymentRadio.checked) {
+      walletPayDiv.style.display = "block"; // Show the walletPay div
+    } else if (cashOnDeliveryRadio.checked) {
+      walletPayDiv.style.display = "none";
+      grandTotalDiv.style.display = 'none' // Hide the walletPay div
+    }
+  }
+
+
+  function showGrnadTotal(wallet,total){
+    let walletCheckbox = document.getElementById("payWithWallet");
+    let grandTotalDiv = document.getElementById("grandTotal");
+    let grandTotalField = document.getElementById("grandTotalField");
+
+    if(walletCheckbox.checked){
+      grandTotalDiv.style.display = 'block'
+      let grandTotal = total - wallet 
+      if(grandTotal > 0 ){
+        grandTotalField.textContent = `₹${grandTotal.toFixed(2)}`
+      } else {
+        grandTotalField.textContent = `₹0.00`
+      }
+    } else {
+      grandTotalDiv.style.display = 'none'
+    }
+  }
 
     function orderList(){
       fetch(`/orderList`,{
@@ -442,7 +489,15 @@
         })
     }
 
+
+    $('#exampleModal1').modal({
+    backdrop: 'static',
+    keyboard: false
+  });
+
+
   </script>
+  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script>
     $(document).ready(function () {
@@ -482,11 +537,14 @@
           const discount = parseFloat(discountText.replace('-₹', ''));
           const totalText = document.getElementById('total').textContent;
           const total = parseFloat(totalText.replace('₹', ''));
+          const walletCheckbox = document.getElementById("payWithWallet");
+          const walletSelected = walletCheckbox.checked;
 
           console.log(addressIndex,paymentMethod,userId,discount,total);
 
           // Prepare the data to send in the request
           const orderData = {
+            walletSelected,
             paymentMethod,
             addressIndex,
             userId,
@@ -508,7 +566,13 @@
             if (data.success) {
               // Show the modal after successful order placement
               $('#exampleModal1').modal('show');
+
+            }  else if (data.order) { 
+
+              razorpayPayment(data.order);
+              console.log(data.order);
             } else {
+
               // Handle the case where order placement failed
               console.error("Order placement failed:", data.error);
               // You can show an error message or handle it as needed
@@ -521,4 +585,61 @@
         }
       });
     });
+
+
+    function razorpayPayment(order){
+      var options = {
+      "key": "rzp_test_GC8Zbt4KsKP1aV", // Enter the Key ID generated from the Dashboard
+      "amount": order.amount, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
+      "currency": "INR",
+      "name": "OXBO",
+      "description": "Test Transaction",
+      "image": "https://example.com/your_logo",
+      "order_id": order.id, //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
+      "handler": function (response){
+        console.log(order.receipt);
+        confirmOrder(response,order.receipt);
+        $('#exampleModal1').modal('show');
+
+          // alert(response.razorpay_payment_id);
+          // alert(response.razorpay_order_id);
+          // alert(response.razorpay_signature)
+      },
+      "prefill": {
+          "name": "Gaurav Kumar",
+          "email": "gaurav.kumar@example.com",
+          "contact": "9000090000"
+      },
+      "notes": {
+          "address": "Razorpay Corporate Office"
+      },
+      "theme": {
+          "color": "#3399cc"
+    }
+      };
+      var rzp1 = new Razorpay(options);
+      rzp1.open();
+      rzp1.on('payment.failed', function (response){
+        deleteOrder(response,order);
+              // alert(response.error.code);
+              // alert(response.error.description);
+              // alert(response.error.source);
+              // alert(response.error.step);
+              // alert(response.error.reason);
+              // alert(response.error.metadata.order_id);
+              // alert(response.error.metadata.payment_id);
+      });
+      // document.getElementById('rzp-button1').onclick = function(e){
+      //     rzp1.open();
+      //     e.preventDefault();
+      // }
+    }
+
+    async function confirmOrder(response,orderId){
+      console.log(orderId);
+      fetch(`/confirmOrder?response=${response}&orderId=${orderId}`)
+    }
+
+  
   </script>
+

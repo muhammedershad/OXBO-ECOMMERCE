@@ -20,7 +20,7 @@ app.use('/images',express.static(path.join(__dirname, 'images')));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(morgan('dev'));
-app.use(multer({dest:'images',storage: multerSetup}).array('images',6)); 
+app.use(multer({dest:'images',storage: multerSetup}).array('images',8)); 
 app.use(session({
     secret: 'secret-key',
     resave: false,
