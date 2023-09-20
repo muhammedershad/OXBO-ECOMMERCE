@@ -10,6 +10,7 @@ const { response } = require('express');
 const orderData = require('../models/orders')
 const couponData = require('../models/coupon')
 const RazorPay = require('razorpay');
+const bannerData = require('../models/banner');
 
 
 async function sendOTP(email) {
@@ -72,8 +73,10 @@ module.exports = {
 
     HomePage : async (req,res) => {
         try {
+            const banner = await bannerData.find({active : true});
             const locals = {
                 title : 'Home',
+                banner
             }
             res.render('home',locals);
         } catch (error) {

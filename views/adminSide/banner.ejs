@@ -1,0 +1,197 @@
+
+<%- include('../partials/adminnav.ejs') %>
+
+        <div class="dash-content">
+            <div class="overview">
+                <div class="title" id="title-div">
+                    <i class="uil uil-tachometer-fast-alt"></i>
+                    <span class="text">Banners</span>
+
+                    <!-- Button trigger modal -->
+                    <button type="button" class="btn" id="categoryBtn" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                        Add Banner
+                    </button>
+                    
+                    <!-- Modal -->
+                    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h1 class="modal-title fs-5" id="exampleModalLabel">Add Banner</h1>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <form action="/admin/banner" method="post" enctype="multipart/form-data">
+                                    <div class="modal-body">
+                                        <input type="text" class="form-control my-2" id="bannerTitle" name="bannerTitle" placeholder="Enter banner main title" required>
+                                        <input type="text" class="form-control my-2" id="bannerSubtitle" name="bannerSubtitle" placeholder="Enter banner subtitle" required>
+                                        <select class="form-select mb-2" id="bannerCategory" name="bannerCategory" required>
+                                            <% category.forEach(category => { %>
+                                                <option value="<%= category.category %>" selected><%= category.category %></option>
+                                            <% }) %>
+                                        </select>
+                                        <div class="input-group mb-3">
+                                            <input type="file" name="images" required class="form-control" id="bannerImage">
+                                            <label class="input-group-text" for="inputGroupFile02">Upload</label>
+                                        </div>
+                                        <small id="couponyError" class="text-danger d-block"></small>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                        <button type="submit" class="btn btn-primary">Add Banner</button>
+                                    </div>
+                                </form>
+                                
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Banner</th>
+                            <th>Main Title</th>
+                            <th>Subtitle</th>
+                            <th>Category</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                            <th>Action</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% banners.forEach(banner => { %>
+                            <tr>
+                                <td><img id="banner" style="height: 50px;width: 100px;" src="/<%= banner.image %>" alt="Product Image"></td>
+                                <td><%= banner.title %></td>
+                                <td><%= banner.subtitle %></td>
+                                <td><%= banner.category %></td>
+                                <td><%= banner.active %></td>
+                                <td>
+                                    <!-- Button trigger modal -->
+                                    <button type="button" class="btn" id="categoryBtn" data-bs-toggle="modal" data-bs-target="#editCategoryModal<%= banner._id %>">
+                                        Edit
+                                    </button>
+                                    
+                                    <!-- Modal -->
+                                    <div class="modal fade" id="editCategoryModal<%= banner._id %>" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog modal-dialog-centered">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h1 class="modal-title fs-5" id="exampleModalLabel">Edit Banner</h1>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </div>
+                                                <form action="/admin/banner-edit" method="post" enctype="multipart/form-data">
+                                                    <div class="modal-body">
+                                                        <input type="text" hidden name="bannerId" value="<%= banner._id %>">
+                                                        <input type="text" class="form-control my-2" id="bannerTitle" name="bannerTitle" placeholder="Enter banner main title" value="<%= banner.title %>" required>
+                                                        <input type="text" class="form-control my-2" id="bannerSubtitle" name="bannerSubtitle" placeholder="Enter banner subtitle" value="<%= banner.subtitle %>" required>
+                                                        <select class="form-select mb-2" id="bannerCategory" name="bannerCategory" required>
+                                                            <option value="<%= banner.category %>" selected><%= banner.category %></option>
+                                                            <% category.forEach(category => { %>
+                                                                <option value="<%= category.category %>" ><%= category.category %></option>
+                                                            <% }) %>
+                                                        </select>
+                                                        <div class="input-group mb-3">
+                                                            <input type="file" name="images" class="form-control" id="bannerImage">
+                                                            <label class="input-group-text" for="inputGroupFile02">Upload</label>
+                                                        </div>
+                                                        <small id="couponyError" class="text-danger d-block"></small>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                        <button type="submit" class="btn btn-primary">Edit Banner</button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <button class="btn" id="categoryBtn" data-id="<%= banner._id %>" data-bs-toggle="modal" data-bs-target="#listConfirmationModal">
+                                        <%= banner.active ? 'Unlist' : 'List' %>
+                                    </button>
+
+                                    <div class="modal fade" id="listConfirmationModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h1 class="modal-title fs-5" id="exampleModalLabel">Confirmation</h1>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                Are you really want to <%= banner.active ? 'Unlist' : 'List' %> this?
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                <button type="button" class="btn btn-primary" onclick="listBanner('<%= banner._id %>')" data-bs-dismiss="modal"><%= banner.active ? 'Unlist' : 'List' %></button>
+                                            </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <button class="btn" id="categoryBtn" data-bs-toggle="modal" data-bs-target="#deleteConfirmationModal"> 
+                                        Delete
+                                    </button>
+
+                                    <div class="modal fade" id="deleteConfirmationModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h1 class="modal-title fs-5" id="exampleModalLabel">Confirmation</h1>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                Are you really want to delete this?
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                <button type="button" class="btn btn-primary" onclick="deleteBanner('<%= banner._id %>')" data-bs-dismiss="modal">Delete</button>
+                                            </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        <% }); %>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    <script>
+        async function deleteBanner(bannerId) {
+            console.log(bannerId);
+            try {
+
+                fetch(`/admin/banner/${bannerId}`,{
+                    method:"DELETE",
+                })
+                window.location.reload();
+
+            } catch (error) {
+                console.error('An error occurred:', error);
+            }
+        }
+
+        async function listBanner(bannerId) {
+            console.log(bannerId);
+            try {
+
+                fetch(`/admin/banner/${bannerId}`,{
+                    method:"PATCH",
+                })
+                window.location.reload();
+
+            } catch (error) {
+                console.error('An error occurred:', error);
+            }
+        }
+    </script>
+    
+    <script src="/javascripts/dash.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
+   
+</body>
+</html>

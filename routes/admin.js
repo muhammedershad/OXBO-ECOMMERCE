@@ -3,6 +3,7 @@ const adminDash = require('../controllers/adminHome');
 const adminHome = require('../controllers/adminHome');
 const auth = require('../middleware/adminAuth');
 const coupon = require('../controllers/coupon');
+const bannerController = require('../controllers/banner');
 
 const router = express.Router();
 
@@ -35,6 +36,12 @@ router.get('/coupon',auth.auth,coupon.couponPage)
       .post('/coupon',auth.auth,coupon.Addcoupon)
       .post('/coupon-edit',auth.auth,coupon.editCoupon)
       .patch('/coupon/:id',auth.auth,coupon.listCoupon);
+
+router.get('/banner',auth.auth,bannerController.bannerPage)
+router.post('/banner',auth.auth,bannerController.addBanner)
+router.post('/banner-edit',auth.auth,bannerController.editBanner)
+router.delete('/banner/:id',auth.auth,bannerController.deleteBanner)
+router.patch('/banner/:id',auth.auth,bannerController.listBanner)
       
       
 

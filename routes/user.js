@@ -1,7 +1,8 @@
 const express = require('express');
-const homeControllers = require('../controllers/homePage')
-const userAuth = require('../middleware/userAuth')
+const homeControllers = require('../controllers/homePage');
+const userAuth = require('../middleware/userAuth');
 const coupon = require('../controllers/coupon');
+const bannerController = require('../controllers/banner');
 
 const router = express.Router();
 
