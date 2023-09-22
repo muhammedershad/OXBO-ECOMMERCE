@@ -8,7 +8,8 @@ const bannerController = require('../controllers/banner');
 const router = express.Router();
 
 router.get('/login',auth.logined,adminDash.loginPage);
-router.get('/',auth.auth,adminDash.dashPage);
+router.get('/',adminDash.dashPage);
+
 router.get('/users',auth.auth,adminDash.usersPage);
 router.get('/category',auth.auth,adminDash.category);
 router.get('/product',auth.auth,adminDash.productPage);
@@ -42,6 +43,11 @@ router.post('/banner',auth.auth,bannerController.addBanner)
 router.post('/banner-edit',auth.auth,bannerController.editBanner)
 router.delete('/banner/:id',auth.auth,bannerController.deleteBanner)
 router.patch('/banner/:id',auth.auth,bannerController.listBanner)
+
+router.get('/dash-totalOrders',adminDash.totalOders)
+router.get('/dash-totalRevenue',adminDash.totalRevenue)
+router.get('/dash-profit',adminDash.profit)
+router.get('/dash-orderPerMonth',adminDash.orderPerMonth)
       
       
 

@@ -8,44 +8,135 @@
                 </div>
 
                 <div class="row justify-content-around w-100 mt-4">
-                    <div class="col-md-3 mb-3">
+                    <div class="col-md-4 mb-3">
                       <div class="card text-center shadow border-0">
                         <div class="card-body">
                           <h5 class="card-title">Total Orders</h5>
-                          <h4 class="card-text">15</h4>
+                          <h4 class="card-text mb-3" id="totalOrders"><%= data.totalOrders1 %></h4>
+                          <div class=" d-flex align-items-center">
+                            <input type="date" id="totalOrderFromDate" onchange="updateTotalOrder()" class="form-control ">
+                            <h6 class="mx-2">To</h6>
+                            <input type="date" id="totalOrderToDate" onchange="updateTotalOrder()" class="form-control ">
+                          </div>
                         </div>
                       </div>
                     </div>
-                    <div class="col-md-3 mb-3 ">
+                    <div class="col-md-4 mb-3 ">
                       <div class="card text-center shadow border-0">
                         <div class="card-body">
                           <h5 class="card-title">Total Revenue</h5>
-                          <h4 class="card-text">$100,245</h4>
+                          <h4 class="card-text mb-3" id="totalRevenue">₹<%= data.totalRevenue %></h4>
+                          <div class=" d-flex align-items-center">
+                            <input type="date" id="totalRevenueFromDate" onchange="updateTotalRevenue()" class="form-control">
+                            <h6 class="mx-2">To</h6>
+                            <input type="date" id="totalRevenueToDate" onchange="updateTotalRevenue()" class="form-control">
+                          </div>
                         </div>
                       </div>
                     </div>
-                    <div class="col-md-3 mb-3">
+                    <div class="col-md-4 mb-3">
                       <div class="card text-center shadow border-0">
                         <div class="card-body">
                           <h5 class="card-title">Total Profit</h5>
-                          <h4 class="card-text">$25,632</h4>
+                          <h4 class="card-text mb-3" id="profit">₹<%= data.profit %></h4>
+                          <div class=" d-flex align-items-center">
+                            <input type="date" id="profitFromDate" onchange="updateProfit()" class="form-control">
+                            <h6 class="mx-2">To</h6>
+                            <input type="date" id="profitToDate" onchange="updateProfit()" class="form-control"> 
+                          </div>
                         </div>
                       </div>
                     </div>
                 </div>
 
                 <div class="row d-flex justify-content-center mt-4 w-100 ">
-                  <div class="ml-2 d-flex justify-content-center">
-                    <canvas id="myChart" class="shadow"></canvas>
+                  <div class="col-md-6 text-center">
+                    <h5>Orders Per Month</h5>
+                    <div class="row">
+                      <div class="col-8"></div>
+                      <div class="col-4 mb-3">
+                        <div class="input-group">
+                          <select id="yearSelect" onchange="updateOrderPerMonth()" class="form-select">
+                              <option value="2022">2022</option>
+                              <option value="2023">2023</option>
+                              <option value="2024">2024</option>
+                              <!-- Add more years as needed -->
+                          </select>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="ml-2 d-flex mb-3 justify-content-center">
+                      <input type="hidden" id="ordersPerMonth" value='<%= JSON.stringify(data.monthlyOrdersArray) %>'>
+                      <canvas id="myChart" class="shadow"></canvas>
+                    </div>
+                    <div class="ml-2 d-flex mb-3 justify-content-center">
+                      <canvas id="myChart3" class="shadow"></canvas>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <h5>Orders Per Month</h5>
+                    <div class="row">
+                      <div class="col-8"></div>
+                      <div class="col-4 mb-3">
+                        <div class="input-group">
+                          <select id="yearSelect" onchange="updateOrderPerMonth()" class="form-select">
+                              <option value="2022">2022</option>
+                              <option value="2023">2023</option>
+                              <option value="2024">2024</option>
+                              <!-- Add more years as needed -->
+                          </select>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="ml-2 d-flex justify-content-center">
+                      <input type="hidden" id="category" value='<%= JSON.stringify(data.categories) %>'>
+                      <input type="hidden" id="quantities" value='<%= JSON.stringify(data.quantities) %>'>
+                      <canvas id="myChart2" class="shadow"></canvas>
+                    </div>
                   </div>
                 </div>
             </div> 
         </div>
     </section>
 
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+
+      async function updateOrderPerMonth(){
+        const selectedYear = document.getElementById('yearSelect').value
+        console.log(selectedYear)
+        
+        if(selectedYear){
+            fetch( `/admin/dash-orderPerMonth?selectedYear=${selectedYear}`)
+            .then(response => response.json())
+            .then(data => {
+                const monthlyOrdersArray = data.monthlyOrdersArray;
+                console.log(monthlyOrdersArray);
+                // Update the chart's data with the new data
+                const myChart2 = document.getElementById('myChart2');
+                console.log(myChart2.data);
+                myChart2.data.datasets[0].data = monthlyOrdersArray;
+                myChart2.update();
+
+                // Update the hidden input's value
+                document.getElementById("ordersPerMonth").value = JSON.stringify(monthlyOrdersArray);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+      }
+
+    </script>
+
+<script src="/javascripts/adminDash.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
     <script>
         const ctx = document.getElementById('myChart');
+        const ordersPerMonth = document.getElementById('ordersPerMonth').value;
+        const monthlyOrdersArray = JSON.parse(ordersPerMonth)
+        console.log(monthlyOrdersArray);
        
         const data = {
               labels: [
@@ -53,8 +144,8 @@
                         "July", "August", "September", "October", "November", "December"
                       ],
               datasets: [{
-                label: 'My First Dataset',
-                data: [65, 59, 80, 81, 56, 55, 40, 55, 40, 23, 150, 10],
+                label: 'Oders per month',
+                data: monthlyOrdersArray,
                 backgroundColor: [
                   'rgba(54, 162, 235, 1)',
                 ],
@@ -76,6 +167,76 @@
                     }
                   }
         });
+
+
+
+
+
+
+        const ctx3 = document.getElementById('myChart3');
+       
+        const data3 = {
+              labels: [
+                        "January", "February", "March", "April", "May", "June",
+                        "July", "August", "September", "October", "November", "December"
+                      ],
+              datasets: [{
+                label: 'My First Dataset',
+                data: [65, 59, 80, 81, 56, 55, 40, 55, 40, 23, 150, 10],
+                backgroundColor: [
+                  'rgba(54, 162, 235, 1)',
+                ],
+                borderColor: [
+                  'rgba(54, 162, 235, 1)'
+                ],
+                borderWidth: 0
+              }]
+            }
+
+        new Chart(ctx3, {
+          type: 'bar',
+          data: data3,
+          options: {
+                    scales: {
+                      y: {
+                        beginAtZero: true
+                      }
+                    }
+                  }
+        });
+
+
+
+        const ctx2 = document.getElementById('myChart2');
+        const categoriesField = document.getElementById('category').value; // Use getElementById
+        const categories = JSON.parse(categoriesField);
+
+        const quantitiesField = document.getElementById('quantities').value; // Use getElementById
+        const quantities = JSON.parse(quantitiesField);
+
+        console.log(categories,quantities);
+
+        const data2 = {
+          labels: categories,
+          datasets: [{
+            label: 'Quantity per category',
+            data: quantities,
+            backgroundColor: [
+              'rgb(255, 99, 132)',
+              'rgb(75, 192, 192)',
+              'rgb(255, 205, 86)',
+              'rgb(201, 203, 207)',
+              'rgb(54, 162, 235)'
+            ]
+          }]
+        };
+      
+        new Chart(ctx2, {
+          type: 'polarArea',
+          data: data2,
+          options: {}
+        });
+
     </script>
 
     

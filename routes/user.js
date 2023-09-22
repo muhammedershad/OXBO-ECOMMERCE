@@ -52,6 +52,7 @@ router.get('/check-coupoon', userAuth.auth, coupon.verifyCoupon)
 
 router.get('/orderDetails',userAuth.auth,homeControllers.OrderDetailsPage);
 router.post('/cancelOrder',userAuth.auth,homeControllers.cancelOrder);
+router.get('/download-invoice/:orderId',userAuth.auth,homeControllers.downloadInvoice);
 
 router.get('/confirmOrder',userAuth.auth,homeControllers.confirmOrder)
 

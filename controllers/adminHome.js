@@ -13,8 +13,447 @@ const product = require('../models/product');
 
 module.exports = {
 
-    dashPage : (req,res) => {
-        res.render('adminDash')
+    dashPage : async (req,res,next) => {
+        try {
+            const pipeline1 = [
+                {
+                    $match: {
+                        active: true,
+                    }
+                },
+                {
+                    $group: {
+                        _id: null,
+                        totalOrders1: { $sum: 1 }
+                    }
+                }
+            ];
+
+            const result1 = await orderData.aggregate(pipeline1);
+            const totalOrders1 = result1[0] ? result1[0].totalOrders1 : 0;
+
+
+
+
+            const pipeline = [
+                {
+                    $match: {
+                        active: true,
+                        orderStatus: {
+                            $nin: ["Cancelled", "Returned"]
+                        }
+                    }
+                },
+                {
+                    $group: {
+                        _id: null,
+                        totalOrders: { $sum: 1 },
+                        totalRevenue: { $sum: "$total" },
+                        products: { $push: "$products" }
+                    }
+                },
+                {
+                    $unwind: "$products"
+                },
+                {
+                    $unwind: "$products"
+                },
+                {
+                    $lookup: {
+                        from: "products",
+                        localField: "products.product",
+                        foreignField: "_id",
+                        as: "productInfo"
+                    }
+                },
+                {
+                    $unwind: "$productInfo"
+                },
+                {
+                    $project: {
+                        _id: 0,
+                        totalOrders: 1,
+                        totalRevenue: 1,
+                        totalPurchaseAmount: {
+                            $sum: { $multiply: ["$products.quantity", "$productInfo.purchaseRate"] }
+                        }
+                    }
+                },
+                {
+                    $group: {
+                        _id: null,
+                        totalOrders: { $first: "$totalOrders" },
+                        totalRevenue: { $first: "$totalRevenue" },
+                        totalPurchaseAmount: { $sum: "$totalPurchaseAmount" }
+                    }
+                },
+                {
+                    $project: {
+                        _id: 0,
+                        totalOrders: 1,
+                        totalRevenue: 1,
+                        totalPurchaseAmount: 1,
+                        profit: { $subtract: ["$totalRevenue", "$totalPurchaseAmount"] }
+                    }
+                }
+            ];
+            
+            const result = await orderData.aggregate(pipeline);
+            
+            const { totalOrders, totalRevenue, totalPurchaseAmount, profit } = result[0] || {
+                totalOrders: 0,
+                totalRevenue: 0,
+                totalPurchaseAmount: 0,
+                profit: 0
+            };
+
+            const targetYear = 2023; 
+
+            const pipeline3 = [
+                {
+                    $match: {
+                        active: true,
+                        orderDate: {
+                            $gte: new Date(`${targetYear}-01-01`),
+                            $lt: new Date(`${targetYear + 1}-01-01`)
+                        }
+                    }
+                },
+                {
+                    $group: {
+                        _id: {
+                            $dateToString: {
+                                format: "%Y-%m",
+                                date: "$orderDate"
+                            }
+                        },
+                        totalOrders: { $sum: 1 }
+                    }
+                },
+                {
+                    $sort: {
+                        _id: 1 
+                    }
+                }
+            ]
+            
+            const monthlyOrderData = await orderData.aggregate(pipeline3);
+
+            function fillMissingMonths(monthlyOrderData) {
+                const resultArray = [];
+                const monthsMap = new Map();
+            
+                for (const monthData of monthlyOrderData) {
+                    monthsMap.set(monthData._id, monthData.totalOrders);
+                }
+            
+                for (let month = 1; month <= 12; month++) {
+                    const monthKey = `2023-${month.toString().padStart(2, '0')}`;
+                    const orders = monthsMap.get(monthKey) || 0; 
+                    resultArray.push(orders);
+                }
+            
+                return resultArray;
+            }
+            
+            const monthlyOrdersArray = fillMissingMonths(monthlyOrderData);
+            console.log(monthlyOrdersArray);
+
+            const categorySales = await orderData.aggregate([
+                {
+                    $match: { active: true } // Filter active orders
+                },
+                {
+                    $unwind: '$products' // Split the products array into separate documents
+                },
+                {
+                    $lookup: {
+                        from: 'products', // The name of your products collection
+                        localField: 'products.product',
+                        foreignField: '_id',
+                        as: 'productInfo'
+                    }
+                },
+                {
+                    $unwind: '$productInfo' // Unwind the productInfo array
+                },
+                {
+                    $group: {
+                        _id: '$productInfo.category', // Group by category
+                        totalQuantitySold: { $sum: '$products.quantity' } // Sum the quantity for each category
+                    }
+                },
+                {
+                    $project: {
+                        _id: 0, // Exclude the _id field
+                        category: '$_id', // Rename _id to category
+                        totalQuantitySold: 1 // Include the totalQuantitySold field
+                    }
+                }
+            ]).exec();
+        
+            const categories = categorySales.map(item => item.category);
+            const quantities = categorySales.map(item => item.totalQuantitySold);
+            console.log(categories);
+            console.log(quantities);
+            
+            const data = {
+                totalOrders1,
+                totalRevenue,
+                totalPurchaseAmount,
+                profit,
+                monthlyOrdersArray,
+                categories,
+                quantities
+            };
+
+            res.render('adminDash',{data})
+
+        } catch (error) {
+            const err = new Error(error)
+            err.statusCode = 500
+            err.error = 'Error in loading admin dash'
+            return next(err)
+        }
+    },
+
+    totalOders : async (req,res,next) => {
+        try {
+            const { totalOrderFromDate, totalOrderToDate } = req.query;
+
+            const fromDate = new Date(totalOrderFromDate);
+            const toDate = new Date(totalOrderToDate);
+
+            const pipeline = [
+                {
+                    $match: {
+                        active: true,
+                        orderDate: {
+                            $gte: fromDate,
+                            $lte: toDate
+                        }
+                    }
+                },
+                {
+                    $group: {
+                        _id: null,
+                        totalOrders: { $sum: 1 }
+                    }
+                }
+            ];
+
+            const result = await orderData.aggregate(pipeline);
+            const totalOrders = result[0] ? result[0].totalOrders : 0;
+
+            res.json({totalOrders})
+
+        } catch (error) {
+            const err = new Error(error)
+            err.statusCode = 500
+            err.error = 'Error in getting total orders'
+            return next(err)
+        }
+    },
+
+    totalRevenue : async (req,res,next) => {
+        try {
+            const { totalRevenueFromDate, totalRevenueToDate } = req.query;
+
+            const fromDate = new Date(totalRevenueFromDate);
+            const toDate = new Date(totalRevenueToDate);
+
+            const pipeline = [
+                {
+                    $match: {
+                        active: true,
+                        orderStatus: {
+                            $nin: ["Cancelled", "Returned"] 
+                        },
+                        orderDate: {
+                            $gte: fromDate,
+                            $lte: toDate
+                        }
+                    }
+                },
+                {
+                    $group: {
+                        _id: null,
+                        totalRevenue: { $sum: "$total" } 
+                    }
+                }
+            ];
+
+            const result = await orderData.aggregate(pipeline);
+            const totalRevenue = result[0] ? result[0].totalRevenue : 0;
+
+            res.json({totalRevenue})
+
+        } catch (error) {
+            const err = new Error(error)
+            err.statusCode = 500
+            err.error = 'Error in getting total revenue'
+            return next(err)
+        }
+    },
+
+    profit : async (req,res,next) => {
+        try {
+            console.log(req.query);
+            const { profitFromDate, profitToDate } = req.query;
+
+            const fromDate = new Date(profitFromDate);
+            const toDate = new Date(profitToDate);
+
+            const pipeline = [
+                {
+                    $match: {
+                        active: true,
+                        orderDate: {
+                            $gte: fromDate,
+                            $lte: toDate
+                        },
+                        orderStatus: {
+                            $nin: ["Cancelled", "Returned"]
+                        }
+                    }
+                },
+                {
+                    $group: {
+                        _id: null,
+                        totalOrders: { $sum: 1 },
+                        totalRevenue: { $sum: "$total" },
+                        products: { $push: "$products" }
+                    }
+                },
+                {
+                    $unwind: "$products"
+                },
+                {
+                    $unwind: "$products"
+                },
+                {
+                    $lookup: {
+                        from: "products",
+                        localField: "products.product",
+                        foreignField: "_id",
+                        as: "productInfo"
+                    }
+                },
+                {
+                    $unwind: "$productInfo"
+                },
+                {
+                    $project: {
+                        _id: 0,
+                        totalOrders: 1,
+                        totalRevenue: 1,
+                        totalPurchaseAmount: {
+                            $sum: { $multiply: ["$products.quantity", "$productInfo.purchaseRate"] }
+                        }
+                    }
+                },
+                {
+                    $group: {
+                        _id: null,
+                        totalOrders: { $first: "$totalOrders" },
+                        totalRevenue: { $first: "$totalRevenue" },
+                        totalPurchaseAmount: { $sum: "$totalPurchaseAmount" }
+                    }
+                },
+                {
+                    $project: {
+                        _id: 0,
+                        totalOrders: 1,
+                        totalRevenue: 1,
+                        totalPurchaseAmount: 1,
+                        profit: { $subtract: ["$totalRevenue", "$totalPurchaseAmount"] }
+                    }
+                }
+            ];
+            
+            const result = await orderData.aggregate(pipeline);
+            
+            const { totalOrders, totalRevenue, totalPurchaseAmount, profit } = result[0] || {
+                totalOrders: 0,
+                totalRevenue: 0,
+                totalPurchaseAmount: 0,
+                profit: 0
+            };
+            console.log(profit);
+            
+            res.json({profit});
+
+        } catch (error) {
+            const err = new Error(error)
+            err.statusCode = 500
+            err.error = 'Error in getting profit'
+            return next(err)
+        }
+    },
+
+    orderPerMonth : async (req,res,next) => {
+        try {
+            console.log(req.query.selectedYear);
+            const targetYear = req.query.selectedYear; 
+
+            const pipeline3 = [
+                {
+                    $match: {
+                        active: true,
+                        orderDate: {
+                            $gte: new Date(`${targetYear}-01-01`),
+                            $lt: new Date(`${targetYear + 1}-01-01`)
+                        }
+                    }
+                },
+                {
+                    $group: {
+                        _id: {
+                            $dateToString: {
+                                format: "%Y-%m",
+                                date: "$orderDate"
+                            }
+                        },
+                        totalOrders: { $sum: 1 }
+                    }
+                },
+                {
+                    $sort: {
+                        _id: 1 
+                    }
+                }
+            ]
+            
+            const monthlyOrderData = await orderData.aggregate(pipeline3);
+
+            function fillMissingMonths(monthlyOrderData) {
+                const resultArray = [];
+                const monthsMap = new Map();
+            
+                for (const monthData of monthlyOrderData) {
+                    monthsMap.set(monthData._id, monthData.totalOrders);
+                }
+            
+                for (let month = 1; month <= 12; month++) {
+                    const monthKey = `2023-${month.toString().padStart(2, '0')}`;
+                    const orders = monthsMap.get(monthKey) || 0; 
+                    resultArray.push(orders);
+                }
+            
+                return resultArray;
+            }
+            
+            const monthlyOrdersArray = fillMissingMonths(monthlyOrderData);
+            console.log(monthlyOrdersArray);
+
+            res.json({monthlyOrdersArray})
+
+        } catch (error) {
+            const err = new Error(error)
+            err.statusCode = 500
+            err.error = 'Error in getting profit'
+            return next(err)
+        }
     },
 
     usersPage : async (req,res) => {

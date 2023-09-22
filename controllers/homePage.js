@@ -11,7 +11,7 @@ const orderData = require('../models/orders')
 const couponData = require('../models/coupon')
 const RazorPay = require('razorpay');
 const bannerData = require('../models/banner');
-
+const PDFDocument = require('pdfkit');
 
 async function sendOTP(email) {
 
@@ -744,7 +744,9 @@ module.exports = {
                     total : total,
                     products: [],
                     active : false,
-                    refunded : false
+                    refunded : false,
+                    changeDate : Date.now()
+
                 })
                 await user.save();
 
@@ -957,9 +959,42 @@ module.exports = {
             const err = new Error(error)
             err.statusCode = 500
             err.error = 'Error in confirm Order'
+            return next(err)
         }
     },
 
-   
+    downloadInvoice : async (req,res,next) => {
+        try {
+            const orderId = req.params.orderId
+
+            const order = await orderData.findById(orderId)
+            const doc = new PDFDocument();
+            
+            res.setHeader('Content-Disposition', `attachment; filename="invoice_${orderId}.pdf"`);
+            res.setHeader('Content-Type', 'application/pdf');
+
+            // Pipe the PDF content to the response
+            doc.pipe(res);
+
+            doc.fontSize(16).text('Invoice', { align: 'center' });
+
+            // Order Details Section
+            doc.text(`Order ID: ${order._id}`);
+            doc.text(`Ordered Date: ${order.orderDate.toLocaleDateString()}`);
+            doc.text(`Order Status: ${order.orderStatus}`);
+
+            // Customize the PDF content (add your invoice data here)
+            doc.fontSize(14).text(`Invoice for Order ${order._id}`, 50, 50);
+            // Include other invoice content such as customer info, products, etc.
+
+            // Finalize the PDF and send it as a response
+            doc.end();
+        } catch (error) {
+            const err = new Error(error)
+            err.statusCode = 500
+            err.error = 'Error in downloading invoice'
+            return next(err)
+        }
+    }
 
 }

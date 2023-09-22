@@ -80,7 +80,12 @@
                 </div>
                 <div class="d-flex justify-content-between align-items-center mb-4">
                   <p class="lead fw-normal mb-0" style="color: #1a1017;">Order Details</p>
-                  <p class="small text-muted mb-0">Receipt Voucher : 1KAU9-84UIL</p>
+                  <div class="">
+                    <p class="small text-muted mb-2">Receipt Voucher : 1KAU9-84UIL</p>
+                    <div class="d-flex justify-content-end">
+                      <a href="/download-invoice/<%= orders._id %>" class="btn3" style="background-color: #090909e2; backdrop-filter: blur(10px);">Download Invoice</a>
+                    </div>
+                  </div>
                 </div>
                 
                 <div class="card-body">
