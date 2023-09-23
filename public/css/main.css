@@ -49,10 +49,8 @@ svg{
 .btn{
     padding: 6px 15px 6px 15px ;
     border-radius: 13px;
-    background: rgb(29,30,57);
-    background: linear-gradient(90deg, rgba(29,30,57,1) 0%, rgba(65,86,148,1) 66%, rgba(37,44,101,1) 100%);
-    background-color: linear-gradient(90deg, rgb(58, 59, 97) 0%, rgba(65,86,148,1) 66%, rgba(37,44,101,1) 100%);
-    color: white;
+    background-color: rgb(24, 24, 24);
+    color: rgb(235, 230, 230);
     font-size: small;
 }
 
@@ -63,7 +61,7 @@ svg{
 .btn1{
     padding: 6px 15px 6px 15px ;
     border-radius: 0;
-    background-color: linear-gradient(90deg, rgba(29,30,57,1) 0%, rgba(65,86,148,1) 66%, rgba(37,44,101,1) 100%);
+    background-color: rgb(26, 26, 26);
     color: rgb(255, 255, 255);
     font-size: large;
     text-decoration: none;
@@ -75,7 +73,7 @@ svg{
     border: solid;
     border-width: 1px;
     border-color: #040404;
-    color: rgb(0, 0, 0);
+    color: rgb(255, 255, 255);
     font-size: small;
 }
 
@@ -84,7 +82,7 @@ svg{
     border-radius: 13px;
     border: solid;
     border-width: 1px;
-    border-color: #ffffff;
+    border-color: #222121;
     background-color: rgb(208, 94, 94);
     color: rgb(255, 255, 255);
     font-size: small;
@@ -132,7 +130,7 @@ svg{
     height: 100vh; /* Adjust the height as per your requirement */
     overflow: auto;
     /* overflow-y: hidden;  */
-  }
+}
 
 
 

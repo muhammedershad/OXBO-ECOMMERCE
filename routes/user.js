@@ -50,9 +50,9 @@ router.get('/resendOTP',homeControllers.resendOTP);
 
 router.get('/check-coupoon', userAuth.auth, coupon.verifyCoupon)
 
-router.get('/orderDetails',userAuth.auth,homeControllers.OrderDetailsPage);
+router.get('/orderDetails',homeControllers.OrderDetailsPage);
 router.post('/cancelOrder',userAuth.auth,homeControllers.cancelOrder);
-router.get('/download-invoice/:orderId',userAuth.auth,homeControllers.downloadInvoice);
+router.get('/invoice/:orderId',homeControllers.invoicePage);
 
 router.get('/confirmOrder',userAuth.auth,homeControllers.confirmOrder)
 

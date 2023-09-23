@@ -27,11 +27,13 @@ router.post('/addProduct',auth.auth,adminHome.addProduct);
 router.post('/editProduct',auth.auth,adminHome.editProduct);
 router.post('/addSubcategory/:categoryId',auth.auth,adminDash.addSubcategory);
 router.patch('/listsubcategory/:categoryId/:subcategory',auth.auth,adminDash.listSubcategory);
-router.get('/orderList',auth.auth,adminDash.orderListPage);
+router.get('/orderList',adminDash.orderListPage);
 router.post('/deleteimg',auth.auth,adminDash.deleteimg);
 
 router.post('/updateOrderStatus', auth.auth, adminDash.updateStatus)
       .get('/orderDetails',auth.auth,adminDash.orderDetailsPage)
+
+router.get('/downloadSalesReport',adminHome.downloadSalesReport)
 
 router.get('/coupon',auth.auth,coupon.couponPage)
       .post('/coupon',auth.auth,coupon.Addcoupon)

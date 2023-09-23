@@ -364,7 +364,7 @@ nav.close ~ .dashboard .top{
 #categoryBtn{
     padding: 6px 15px 6px 15px ;
     border-radius: 13px;
-    background-color: linear-gradient(90deg, rgba(29,30,57,1) 0%, rgba(65,86,148,1) 66%, rgba(37,44,101,1) 100%);
+    background-color: rgb(24, 24, 24);
     color: rgb(235, 230, 230);
     font-size: small;
 }

@@ -83,7 +83,7 @@
                   <div class="">
                     <p class="small text-muted mb-2">Receipt Voucher : 1KAU9-84UIL</p>
                     <div class="d-flex justify-content-end">
-                      <a href="/download-invoice/<%= orders._id %>" class="btn3" style="background-color: #090909e2; backdrop-filter: blur(10px);">Download Invoice</a>
+                      <a href="/invoice/<%= orders._id %>" class="btn">Invoice</a>
                     </div>
                   </div>
                 </div>
@@ -249,6 +249,18 @@
         }
         
     }
+
+    function downloadPDF() {
+      // Replace 'yourfile.pdf' with the actual file path or URL you want to download
+      const downloadLink = document.createElement('a');
+      downloadLink.href = 'yourfile.pdf';
+      downloadLink.download = 'invoice.pdf'; // Set the desired file name
+      downloadLink.style.display = 'none';
+      document.body.appendChild(downloadLink);
+      downloadLink.click();
+      document.body.removeChild(downloadLink);
+  }
+
 </script>
 
 <%- include('../partials/footer.ejs') %>

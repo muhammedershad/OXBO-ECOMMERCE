@@ -12,6 +12,14 @@ const couponData = require('../models/coupon')
 const RazorPay = require('razorpay');
 const bannerData = require('../models/banner');
 const PDFDocument = require('pdfkit');
+const puppeteer = require('puppeteer');
+const ejs = require('ejs');
+const path = require('path');
+const pdfkit = require('pdfkit');
+const fs = require('fs'); 
+const pdf = require('pdf-creator-node');
+
+
 
 async function sendOTP(email) {
 
@@ -364,7 +372,8 @@ module.exports = {
 
     productPage: async (req, res) => {
         try {
-            const { encodedCategory, number, encodedSearch, gender, min, max } = req.query;
+            const { encodedCategory, encodedSubCategory, number, encodedSearch, gender, min, max } = req.query;
+            console.log(req.query);
 
             let minNum
             let maxNum
@@ -381,6 +390,12 @@ module.exports = {
             let category
             if(encodedCategory){
                  category = decodeURIComponent(encodedCategory);
+            }
+
+            let subCategory
+            if(encodedSubCategory){
+                 subCategory = decodeURIComponent(encodedSubCategory);
+                 console.log(subCategory);
             }
 
             let regexPattern
@@ -403,6 +418,10 @@ module.exports = {
                 filter.category = category
             }
 
+            if(subCategory){
+                filter.subcategory = subCategory
+            }
+
             if (typeof minNum === 'number' && typeof maxNum === 'number') {
                 filter.MRP = {
                     $gte: minNum,
@@ -410,7 +429,7 @@ module.exports = {
                 };
             }
 
-            const perPage = 4; 
+            const perPage = 12; 
             const currentPage = parseInt(req.query.page) || 1; // Get the current page number from the query parameter
     
             // Calculate the skip value based on the current page and products per page
@@ -880,7 +899,6 @@ module.exports = {
                 subtotal += product.MRP * quantity;
             }
 
-            console.log(orders);
             res.render('userSide/orderDetails',{orders,subtotal})
         } catch (error) {
             console.log(error);
@@ -889,6 +907,7 @@ module.exports = {
 
     cancelOrder : async (req,res) => {
         try {
+            console.log('cancel');
             const {orderId} = req.query
             const {reason,orderStatus} = req.body
    
@@ -963,36 +982,17 @@ module.exports = {
         }
     },
 
-    downloadInvoice : async (req,res,next) => {
+    invoicePage : async (req,res,next) => {
         try {
-            const orderId = req.params.orderId
+            const orderId = req.params.orderId;
+            const order = await orderData.findById(orderId).populate('products.product');
 
-            const order = await orderData.findById(orderId)
-            const doc = new PDFDocument();
-            
-            res.setHeader('Content-Disposition', `attachment; filename="invoice_${orderId}.pdf"`);
-            res.setHeader('Content-Type', 'application/pdf');
+            res.render('userSide/invoice',{order})
 
-            // Pipe the PDF content to the response
-            doc.pipe(res);
-
-            doc.fontSize(16).text('Invoice', { align: 'center' });
-
-            // Order Details Section
-            doc.text(`Order ID: ${order._id}`);
-            doc.text(`Ordered Date: ${order.orderDate.toLocaleDateString()}`);
-            doc.text(`Order Status: ${order.orderStatus}`);
-
-            // Customize the PDF content (add your invoice data here)
-            doc.fontSize(14).text(`Invoice for Order ${order._id}`, 50, 50);
-            // Include other invoice content such as customer info, products, etc.
-
-            // Finalize the PDF and send it as a response
-            doc.end();
         } catch (error) {
             const err = new Error(error)
             err.statusCode = 500
-            err.error = 'Error in downloading invoice'
+            err.error = 'Error in loading invoice'
             return next(err)
         }
     }

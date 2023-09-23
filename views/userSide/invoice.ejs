@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link
+      href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/css/invoice.css" />
+  </head>
+
+  <body>
+    <% let subTotal = 0 %>
+    
+    <div class="container">
+        
+      <div
+        class="offset-xl-2 col-xl-8 col-lg-12 col-md-12 col-sm-12 col-12 padding">
+        <div class="card" >
+            <div class="row">
+                <div class="col-3"></div>
+                <div class="col-3"></div>
+                <div class="col-3"></div>
+                <div class="col-3 mt-4 d-flex justify-content-center">
+                    <button class="btn3" onclick="download()" style="background-color: #090909e2; backdrop-filter: blur(10px);">Download</button>
+                </div>
+            </div>
+            <div id="download">
+                
+              <div class="card-header p-4">
+                <div class="float-right">
+                  <h3 class="mb-0">Invoice #KHY10234</h3>
+                </div>
+              </div>
+              <div class="card-body">
+                <div class="row mb-4">
+                  <div class="col-sm-6">
+                    <p class="fw-bold mb-3">Delivery Addres</p>
+                    <h6 class="mb-2 fw-bold"><%= order.address.name %></h6>
+                    <p class="mb-1"><%= order.address.address %></p>
+                    <p class="mb-1"><%= order.address.city %>, <%= order.address.state %></p>
+                    <p class="mb-1"><%= order.address.country %>, <%= order.address.pincode %></p>
+                    <p class="mb-3 fw-bold"><%= order.address.mobileNumber %></p>
+                  </div>
+                  <div class="col-sm-6 d-flex justify-content-end">
+                    <h6>Order Date: <%= order.orderDate.toLocaleDateString() %></h6>
+                    <!-- <h5 class="mb-3">To:</h5>
+                    <h3 class="text-dark mb-1">Akshay Singh</h3>
+                    <div>478, Nai Sadak</div>
+                    <div>Chandni chowk, New delhi, 110006</div>
+                    <div>Email: info@tikon.com</div>
+                    <div>Phone: +91 9895 398 009</div>
+                  </div> -->
+                </div>
+                <div class="table-responsive-sm">
+                  <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th class="center">#</th>
+                            <th>Product</th>
+                            <th>Brand</th>
+                            <th>Size</th>
+                            <th>Price</th>
+                            <th>Qty</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        
+                        <% order.products.forEach((product, index) => { %>
+                            <tr>
+                                <td class="center"><%= index + 1 %></td>
+                                <td class="left strong"><%= product.product.title %></td>
+                                <td class="left"><%= product.product.brand %></td>
+                                <td class="left"><%= product.size %></td>
+                                <td class="right">₹<%= product.product.MRP %></td>
+                                <td class="center"><%= product.quantity %></td>
+                                <td class="right">₹<%= product.product.MRP * product.quantity %></td>
+                            </tr>
+                            <% subTotal += (product.product.MRP * product.quantity) %>
+                        <% }) %>
+                    </tbody>
+                  </table>
+                </div>
+                <div class="row">
+                  <div class="col-6"></div>
+                  <div class="col-6 d-flex justify-content-end">
+                    <table class="table table-clear">
+                      <tbody>
+                        <tr>
+                          <td class="left">
+                            <strong class="text-dark">Subtotal</strong>
+                          </td>
+                          <td class="right">₹<%= subTotal %></td>
+                        </tr>
+                        <tr>
+                          <td class="left">
+                            <strong class="text-dark">Discount</strong>
+                          </td>
+                          <td class="right">-₹<%= order.discount %></td>
+                        </tr>
+                        <tr>
+                          <td class="left">
+                            <strong class="text-dark">Delivery Charge</strong>
+                          </td>
+                          <td class="right">₹40</td>
+                        </tr>
+                        <tr>
+                          <td class="left">
+                            <strong class="text-dark">Total</strong>
+                          </td>
+                          <td class="right">
+                            <strong class="text-dark">₹<%= order.total %></strong>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+              <div class="card-footer bg-white">
+                <p class="mb-0">OXBO.com, Sounth Block, Calicut, 110034</p>
+              </div>
+            </div>
+            
+        </div>
+      </div>
+    </div>
+    <script>
+        function download(){
+            console.log('hii');
+            var printContents = document.getElementById('download').innerHTML;
+            var originalContents = document.body.innerHTML;
+
+            document.body.innerHTML = printContents;
+
+            window.print();
+
+            document.body.innerHTML = originalContents;
+        }
+    </script>
+  </body>
+</html>
+

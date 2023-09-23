@@ -7,6 +7,17 @@
                         <span class="text d-flex justify-content-center">Order List</span>
                     </div>
 
+                    <div class="d-flex align-content-center my-3">
+                        <h6 class="mx-2">Sales Report:</h6>
+                        <label for="" class="mx-2">From:</label>
+                        <input type="date" class="mx-2" name="" id="fromDate">
+                        <label for="" class="mx-2">To:</label>
+                        <input type="date" class="mx-2" name="" id="toDate">
+                        
+                        <button class="btn " onclick="downloadSalesReport()" id="categoryBtn" >Download</button>
+                        
+                    </div>
+
                     <ul class="nav nav-tabs mb-2">
                         <li class="nav-item">
                             <a class="nav-link <% if (orderStatus === undefined) { %>
@@ -43,6 +54,7 @@
                                 active
                             <% } %>" href="/admin/orderList?orderStatus=Returned" href="#">Returned </a>
                         </li>
+                        <input type="hidden" id="orderStatus" value="<%= orderStatus %>">
                     </ul>
 
                     <table class="table">
@@ -166,6 +178,32 @@
                 }
             }
 
+
+            async function downloadSalesReport() {
+    const orderStatus = document.getElementById('orderStatus').value;
+    const fromDate = document.getElementById('fromDate').value;
+    const toDate = document.getElementById('toDate').value;
+
+    try {
+      const response = await fetch(`/admin/downloadSalesReport?orderStatus=${orderStatus}&fromDate=${fromDate}&toDate=${toDate}`);
+
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+
+      // Trigger the file download by creating a blob and URL
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'sales-report.csv';
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error('Fetch error:', error);
+    }
+  }
         </script>
         <script src="/javascripts/product.js"></script>
         <script src="/javascripts/dash.js"></script>
