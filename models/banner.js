@@ -23,6 +23,11 @@ const bannerSchema = new mongoose.Schema({
 
     active : {
         type : Boolean
+    },
+
+    offerPercentage : {
+        type : Number,
+        default : 0
     }
 })
 

@@ -24,6 +24,7 @@
                                     <div class="modal-body">
                                         <input type="text" class="form-control my-2" id="bannerTitle" name="bannerTitle" placeholder="Enter banner main title" required>
                                         <input type="text" class="form-control my-2" id="bannerSubtitle" name="bannerSubtitle" placeholder="Enter banner subtitle" required>
+                                        <input type="number" class="form-control my-2" id="offerPercentage" min="0" max="100" name="offerPercentage" placeholder="Specify the percentage discount offered " required>
                                         <select class="form-select mb-2" id="bannerCategory" name="bannerCategory" required>
                                             <% category.forEach(category => { %>
                                                 <option value="<%= category.category %>" selected><%= category.category %></option>
@@ -53,6 +54,7 @@
                             <th>Main Title</th>
                             <th>Subtitle</th>
                             <th>Category</th>
+                            <th>Offer Percentage</th>
                             <th>Status</th>
                             <th>Action</th>
                             <th>Action</th>
@@ -60,12 +62,13 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <% banners.forEach(banner => { %>
+                        <% banners.forEach((banner, index) => { %>
                             <tr>
                                 <td><img id="banner" style="height: 50px;width: 100px;" src="/<%= banner.image %>" alt="Product Image"></td>
                                 <td><%= banner.title %></td>
                                 <td><%= banner.subtitle %></td>
                                 <td><%= banner.category %></td>
+                                <td><%= banner.offerPercentage %>%</td>
                                 <td><%= banner.active %></td>
                                 <td>
                                     <!-- Button trigger modal -->
@@ -86,6 +89,7 @@
                                                         <input type="text" hidden name="bannerId" value="<%= banner._id %>">
                                                         <input type="text" class="form-control my-2" id="bannerTitle" name="bannerTitle" placeholder="Enter banner main title" value="<%= banner.title %>" required>
                                                         <input type="text" class="form-control my-2" id="bannerSubtitle" name="bannerSubtitle" placeholder="Enter banner subtitle" value="<%= banner.subtitle %>" required>
+                                                        <input type="number" class="form-control my-2" id="offerPercentage" min="0" max="100" name="offerPercentage" placeholder="Specify the percentage discount offered " value="<%= banner.offerPercentage %>" required>
                                                         <select class="form-select mb-2" id="bannerCategory" name="bannerCategory" required>
                                                             <option value="<%= banner.category %>" selected><%= banner.category %></option>
                                                             <% category.forEach(category => { %>
@@ -131,7 +135,7 @@
                                     </div>
                                 </td>
                                 <td>
-                                    <button class="btn" id="categoryBtn" data-bs-toggle="modal" data-bs-target="#deleteConfirmationModal"> 
+                                    <button class="btn" id="categoryBtn" data-bs-toggle="modal" data-banner-id="<%= banner._id %>" data-bs-target="#deleteConfirmationModal"> 
                                         Delete
                                     </button>
 

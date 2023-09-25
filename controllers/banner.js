@@ -1,9 +1,11 @@
 const bannerData = require('../models/banner');
 const couponData = require('../models/coupon');
 const categoryData = require('../models/category');
+const { findOneAndUpdate } = require('../models/subcategory');
+const productData = require('../models/product')
 
 module.exports = {
-    bannerPage : async (req,res,next) => {
+    bannerPage : async (req, res, next) => {
         try {
             const category = await categoryData.find();
             const coupons = await couponData.find();
@@ -18,9 +20,9 @@ module.exports = {
         }
     },
 
-    addBanner : async (req,res,next) => {
+    addBanner : async (req, res, next) => {
         try {
-            const {bannerTitle, bannerSubtitle, bannerCategory} = req.body;
+            const {bannerTitle, bannerSubtitle, offerPercentage, bannerCategory} = req.body;
             const images = req.files.map(file => file.path);
             const image = images[0];
 
@@ -29,9 +31,11 @@ module.exports = {
                 subtitle : bannerSubtitle,
                 category : bannerCategory,
                 image : image,
-                active : true
+                active : true,
+                offerPercentage : offerPercentage
             })
             await banner.save()
+
             res.redirect('/admin/banner')
 
         } catch (error) {
@@ -42,11 +46,9 @@ module.exports = {
         }
     },
 
-    editBanner : async (req,res,next) => {
+    editBanner : async (req, res, next) => {
         try {
             const banner = await bannerData.findById(req.body.bannerId)
-
-            console.log(req.files);
 
             if(req.files[0] !== undefined){
                 const images = req.files.map(file => file.path);
@@ -57,6 +59,7 @@ module.exports = {
             banner.title = req.body.bannerTitle
             banner.subtitle = req.body.bannerSubtitle
             banner.category = req.body.bannerCategory
+            banner.offerPercentage = req.body.offerPercentage
             
             await banner.save()
             res.redirect('/admin/banner')
@@ -68,7 +71,7 @@ module.exports = {
         }
     },
 
-    deleteBanner : async (req,res,next) => {
+    deleteBanner : async (req, res, next) => {
         try {
             const {bannerId} = req.params.id
             
@@ -83,7 +86,7 @@ module.exports = {
         }
     },
 
-    listBanner : async (req,res,next) => {
+    listBanner : async (req, res, next) => {
         try {
             const bannerId = req.params.id
             

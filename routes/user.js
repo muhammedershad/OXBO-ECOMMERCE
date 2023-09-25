@@ -34,7 +34,7 @@ router.get('/cart',userAuth.auth,homeControllers.cartPage);
 router.get('/cart-remove-product',userAuth.auth,homeControllers.cartRemoveProduct);
 router.get('/cart-update-product-quantity',userAuth.auth,homeControllers.cartUpdateProductQuantity);
 
-router.post('/addToWishlist',userAuth.auth,homeControllers.addToWishlist)
+
 
 router.get('/checkout',userAuth.auth,homeControllers.ckeckoutPage);
 
@@ -55,6 +55,11 @@ router.post('/cancelOrder',userAuth.auth,homeControllers.cancelOrder);
 router.get('/invoice/:orderId',homeControllers.invoicePage);
 
 router.get('/confirmOrder',userAuth.auth,homeControllers.confirmOrder)
+
+
+router.post('/addToWishlist',userAuth.auth,homeControllers.addToWishlist)
+router.get('/wishlist',userAuth.auth,homeControllers.wishlistPage)
+router.delete('/removeFromWishlist/:productId/:index',userAuth.auth,homeControllers.removeFromWishlist)
 
 
 

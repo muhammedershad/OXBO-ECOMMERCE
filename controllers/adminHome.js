@@ -12,7 +12,7 @@ const product = require("../models/product");
 const { Parser } = require("json2csv");
 const fs = require("fs");
 const path = require("path");
-const XLSX = require('xlsx');
+const XLSX = require("xlsx");
 
 module.exports = {
   dashPage: async (req, res, next) => {
@@ -159,7 +159,6 @@ module.exports = {
       }
 
       const monthlyOrdersArray = fillMissingMonths(monthlyOrderData);
-      console.log(monthlyOrdersArray);
 
       const categorySales = await orderData
         .aggregate([
@@ -198,8 +197,46 @@ module.exports = {
 
       const categories = categorySales.map((item) => item.category);
       const quantities = categorySales.map((item) => item.totalQuantitySold);
-      console.log(categories);
-      console.log(quantities);
+
+
+      const currentYear = 2023
+
+      const pipeline4 = [
+        {
+          $match: {
+            active: true,
+            orderStatus: {
+              $nin: ["Cancelled", "Returned"],
+            },
+            createdAt: {
+              $gte: new Date(currentYear, 0, 1), // Start of the current year
+              $lt: new Date(currentYear + 1, 0, 1), // Start of the next year
+            },
+          },
+        },
+        {
+          $group: {
+            _id: {
+              month: { $month: "$createdAt" },
+            },
+            totalRevenue: { $sum: "$total" },
+          },
+        },
+        {
+          $sort: {
+            "_id.month": 1,
+          },
+        },
+        {
+          $project: {
+            _id: 0,
+            month: "$_id.month",
+            totalRevenue: 1,
+          },
+        },
+      ];
+      
+      const revenuePerMonth = await orderData.aggregate(pipeline4);
 
       const data = {
         totalOrders1,
@@ -458,28 +495,36 @@ module.exports = {
     }
   },
 
-  usersPage: async (req, res) => {
+  usersPage: async (req, res, next) => {
     try {
       const user = await users.find();
       res.render("adminUsers", { users: user });
+
     } catch (error) {
-      console.log(error);
+      const err = new Error(error);
+      err.statusCode = 500;
+      err.error = "Error in loading user management page.";
+      return next(err);
     }
   },
 
-  loginPage: async (req, res) => {
+  loginPage: async (req, res, next) => {
     try {
       const locals = {
         title: "Admin Login",
         error: "",
       };
       res.render("adminLogin", locals);
+
     } catch (error) {
-      console.log(error);
+      const err = new Error(error)
+      err.statusCode = 500
+      err.error = 'Error in loading admin loging page.'
+      return next(err)
     }
   },
 
-  loginPost: async (req, res) => {
+  loginPost: async (req, res, next) => {
     try {
       const { email, password } = req.body;
 
@@ -503,13 +548,17 @@ module.exports = {
       } else {
         return res.render("adminLogin", { error: "incorrect_pass" });
       }
+
     } catch (error) {
-      console.log(error);
-      res.render("adminLogin", { error: "user_not_found" });
+      res.render("adminLogin", { error: "user_not_found" })
+      const err = new Error(error)
+      err.statusCode = 500
+      err.error = 'Error in loading loging page.'
+      return next(err)
     }
   },
 
-  blockUser: async (req, res) => {
+  blockUser : async (req, res, next) => {
     const itemId = req.params.id; // Change 'id' to 'userId'
     // console.log(itemId);
 
@@ -541,14 +590,20 @@ module.exports = {
     }
   },
 
-  category: async (req, res) => {
+  category: async (req, res, next) => {
     try {
       const categorylist = await category.find();
       res.render("adminCategory", { categorylist });
-    } catch (error) {}
+
+    } catch (error) {
+      const err = new Error(error)
+      err.statusCode = 500
+      err.error = 'Error in loading category management page.'
+      return next(err)
+    }
   },
 
-  logout: async (req, res) => {
+  logout: async (req, res, next) => {
     try {
       req.session.destroy((err) => {
         if (err) {
@@ -557,11 +612,14 @@ module.exports = {
         res.redirect("/admin/login");
       });
     } catch (error) {
-      console.log(error);
+      const err = new Error(error)
+      err.statusCode = 500
+      err.error = 'Error in logging out user.'
+      return next(err)
     }
   },
 
-  checkCategory: async (req, res) => {
+  checkCategory: async (req, res, next) => {
     const { oneCategory } = req.query;
 
     try {
@@ -576,7 +634,7 @@ module.exports = {
     }
   },
 
-  addCategory: async (req, res) => {
+  addCategory: async (req, res, next) => {
     try {
       const { categoryName, gender } = req.body;
       const newCategory = new category({
@@ -588,12 +646,16 @@ module.exports = {
       await newCategory.save();
       console.log("category data saved");
       res.redirect("/admin/category");
+
     } catch (error) {
-      console.log(error);
+      const err = new Error(error)
+      err.statusCode = 500
+      err.error = 'Error in adding new category.'
+      return next(err)
     }
   },
 
-  listCategory: async (req, res) => {
+  listCategory: async (req, res, next) => {
     try {
       const categoryId = req.params.id;
       console.log(categoryId);
@@ -622,12 +684,16 @@ module.exports = {
       }
 
       res.status(200).json({ success: true, listedStatus: category.active });
+
     } catch (error) {
-      console.log(error);
+      const err = new Error(error)
+      err.statusCode = 500
+      err.error = 'Error in changing the status of the category.'
+      return next(err)
     }
   },
 
-  updateCategory: async (req, res) => {
+  updateCategory: async (req, res, next) => {
     try {
       const categoryId = req.params.id;
       console.log(categoryId);
@@ -644,17 +710,21 @@ module.exports = {
           .json({ success: false, message: "Category not found" });
       }
       res.redirect("/admin/category");
+
     } catch (error) {
-      console.log(error);
+      const err = new Error(error)
+      err.statusCode = 500
+      err.error = 'Error in updating the details of the category.'
+      return next(err)
     }
   },
 
-  addSubcategory: async (req, res) => {
-    const categoryId = req.params.categoryId; // Get the category ID from the URL
-    const { subcategoryName } = req.body; // Get subcategory name from the request body
+  addSubcategory: async (req, res, next) => {
+    const categoryId = req.params.categoryId; 
+    const { subcategoryName } = req.body; 
     console.log(subcategoryName);
     try {
-      // Find the category by ID
+      
       const updatedCategory = await category.findByIdAndUpdate(categoryId, {
         $push: {
           subcategories: {
@@ -669,12 +739,16 @@ module.exports = {
       }
 
       res.redirect("/admin/category");
+
     } catch (error) {
-      console.error("Error adding subcategory:", error);
+      const err = new Error(error)
+      err.statusCode = 500
+      err.error = 'Error in adding subcategory.'
+      return next(err)
     }
   },
 
-  listSubcategory: async (req, res) => {
+  listSubcategory: async (req, res, next) => {
     try {
       const categoryId = req.params.categoryId;
       const subcategoryName = req.params.subcategory;
@@ -690,12 +764,10 @@ module.exports = {
         (subcategoryObj) => subcategoryObj.subcategory === subcategoryName
       );
       if (!subcategoryObject) {
-        return res
-          .status(404)
-          .json({
-            success: false,
-            message: "Subcategory not found in the category",
-          });
+        return res.status(404).json({
+          success: false,
+          message: "Subcategory not found in the category",
+        });
       }
 
       subcategoryObject.active = !subcategoryObject.active; // Toggle active state
@@ -706,37 +778,43 @@ module.exports = {
       res
         .status(200)
         .json({ success: true, updatedActiveState: subcategoryObject.active });
+
     } catch (error) {
-      console.log(error);
-      res
-        .status(500)
-        .json({ success: false, message: "Internal server error" });
+      const err = new Error(error)
+      err.statusCode = 500
+      err.error = 'Error in updating the status of the subcategory.'
+      return next(err)
     }
   },
 
-  productPage: async (req, res) => {
+  productPage: async (req, res, next) => {
     try {
       const productlist = await productData.find();
       res.render("adminProduct", { productlist });
+
     } catch (error) {
-      console.log(error);
+      const err = new Error(error)
+      err.statusCode = 500
+      err.error = 'Error in loading product management page.'
+      return next(err)
     }
   },
 
-  productCategories: async (req, res) => {
+  productCategories: async (req, res, next) => {
     try {
       const gender = req.query.gender;
       const categories = await category.find({ gender: gender, active: true });
       res.json({ categories });
+
     } catch (error) {
-      console.error("Error fetching categories:", error);
-      res
-        .status(500)
-        .json({ error: "An error occurred while fetching categories" });
+      const err = new Error(error)
+      err.statusCode = 500
+      err.error = 'An error occurred while fetching categories'
+      return next(err)
     }
   },
 
-  productSubcategories: async (req, res) => {
+  productSubcategories: async (req, res, next) => {
     try {
       const categoryId = req.query.categoryId;
       // console.log(categoryId);
@@ -753,15 +831,16 @@ module.exports = {
       );
       // console.log(subcategories);
       res.json({ subcategories });
+
     } catch (error) {
-      console.log(error);
-      res
-        .status(500)
-        .json({ success: false, message: "Internal server error" });
+      const err = new Error(error)
+      err.statusCode = 500
+      err.error = 'An error occurred while fetching subcategories'
+      return next(err)
     }
   },
 
-  addProduct: async (req, res) => {
+  addProduct: async (req, res, next) => {
     try {
       // console.log(req.body);
       const {
@@ -804,12 +883,16 @@ module.exports = {
       });
       await product.save();
       res.redirect("/admin/product");
+
     } catch (error) {
-      console.log(error);
+      const err = new Error(error)
+      err.statusCode = 500
+      err.error = 'An error occurred while adding new product'
+      return next(err)
     }
   },
 
-  editProduct: async (req, res) => {
+  editProduct: async (req, res, next) => {
     try {
       const {
         productId,
@@ -881,11 +964,14 @@ module.exports = {
 
       res.redirect("/admin/product");
     } catch (error) {
-      console.log(error);
+      const err = new Error(error)
+      err.statusCode = 500
+      err.error = 'An error occurred while editing the product details'
+      return next(err)
     }
   },
 
-  deleteimg: async (req, res) => {
+  deleteimg: async (req, res, next) => {
     const { productId, index } = req.query;
     console.log(productId, index);
     try {
@@ -906,12 +992,14 @@ module.exports = {
         res.status(400).json({ message: "Invalid index provided" });
       }
     } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: "Internal server error" });
+      const err = new Error(error)
+      err.statusCode = 500
+      err.error = 'An error occurred while deleting the image'
+      return next(err)
     }
   },
 
-  listProduct: async (req, res) => {
+  listProduct: async (req, res, next) => {
     try {
       const productId = req.params.id;
 
@@ -939,43 +1027,41 @@ module.exports = {
 
       res.status(200).json({ success: true, listedStatus: product.active });
     } catch (error) {
-      console.log(error);
+      const err = new Error(error)
+      err.statusCode = 500
+      err.error = 'An error occurred while updating the product status'
+      return next(err)
     }
   },
 
-  orderListPage: async (req, res) => {
-    try {
-      const { orderStatus } = req.query;
-      let filter = { active: true };
-      if (orderStatus) {
-        filter.orderStatus = orderStatus;
-      }
-
-      const orders = await orderData
-        .find(filter)
-        .populate("products.product")
-        .populate("user")
-        .sort({ orderDate: -1 });
-
-      res.render("adminOrder", { orders, orderStatus });
-    } catch (error) {
-      console.log(error);
-    }
-  },
-
-  updateStatus: async (req, res) => {
+  updateStatus: async (req, res, next) => {
     try {
       const { orderId, status } = req.query;
 
-      const order = await orderData.findById(orderId);
+      const order = await orderData.findById(orderId)
       const user = await users.findById(order.user);
 
       if (
-        (order.paymentMethod === "onlinePayment" && status === "Cancelled") ||
-        status === "Returned"
-      ) {
+        (order.paymentMethod === "onlinePayment" && status === "Cancelled") || status === "Returned") {
         user.wallet += order.total;
         order.refunded = true;
+      }
+
+      if (status === "Cancelled" || status === "Returned") {
+       
+        const updateStockPromises = order.products.map(async (cartItem) => {
+          const product = await productData.findById(cartItem.product._id);
+      
+          if (product) {
+            
+            product.stock[cartItem.size] += cartItem.quantity;
+      
+            return product.save();
+          }
+        });
+      
+        // Wait for all promises to complete
+        await Promise.all(updateStockPromises);
       }
 
       order.orderStatus = status;
@@ -984,64 +1070,49 @@ module.exports = {
       await user.save();
       await order.save();
       res.redirect("/admin/orderList");
+
     } catch (error) {
-      console.log(error);
+      const err = new Error(error)
+      err.statusCode = 500
+      err.error = 'An error occurred while updating the order status'
+      return next(err)
     }
   },
 
   downloadSalesReport: async (req, res, next) => {
     try {
-        const { orderStatus, fromDate, toDate } = req.query;
+      const { orderStatus, fromDate, toDate } = req.query;
 
-    // Create a filter based on query parameters
-    const filter = { active: true };
+      // Create a filter based on query parameters
+      const filter = { active: true };
 
-    if (orderStatus !== '') {
-      filter.orderStatus = orderStatus;
-    }
-
-    // Use the filter to fetch data from your database (orderData)
-    // Replace this with your actual data retrieval code
-    const orders = []; // Replace with your data retrieval logic
-
-    // Convert the data to CSV format
-    const file = [];
-    orders.forEach((order) => {
-      const row = {
-        date: order.orderDate,
-        order_id: order._id,
-        consumer: order.address.name,
-        payment: order.paymentMethod,
-        amount: order.total,
-      };
-      file.push(row);
-    });
-
-    const json2csvParser = new Parser();
-    const csv = json2csvParser.parse(file);
-
-    // Create a unique file name (you can customize this)
-    const fileName = `report-${Date.now()}.csv`;
-
-    // Save the CSV data to a temporary file
-    const filePath = path.join(__dirname, fileName);
-    fs.writeFileSync(filePath, csv);
-
-    // Set the response headers for file attachment
-    res.setHeader('Content-Type', 'text/csv');
-    res.setHeader('Content-Disposition', `attachment; filename=${fileName}`);
-
-    // Send the file
-    res.status(200).sendFile(filePath, (err) => {
-      if (err) {
-        console.error('Error sending CSV file:', err);
-        res.status(500).send('Error sending CSV file.');
+      if (orderStatus !== "") {
+        filter.orderStatus = orderStatus;
       }
 
-      // Cleanup: Remove the temporary file after sending
-      fs.unlinkSync(filePath);
-    });
-      
+      // Use the filter to fetch data from your database (orderData)
+      // Replace this with your actual data retrieval code
+      const orders = await orderData.find(filter);
+
+      // Convert the data to CSV format
+      const file = [];
+      orders.forEach((order) => {
+        const row = {
+          date: order.orderDate,
+          order_id: order._id,
+          consumer: order.address.name,
+          payment: order.paymentMethod,
+          amount: order.total,
+        };
+        file.push(row);
+      });
+
+      const json2csvParser = new Parser();
+      const csv = json2csvParser.parse(file);
+
+      res.attachment(`report-${Date.now()}.csv`);
+      res.status(200).send(csv);
+
     } catch (error) {
       const err = new Error(error);
       err.statusCode = 500;
@@ -1050,7 +1121,7 @@ module.exports = {
     }
   },
 
-  orderDetailsPage: async (req, res) => {
+  orderDetailsPage: async (req, res, next) => {
     try {
       const { orderId } = req.query;
 
@@ -1068,8 +1139,10 @@ module.exports = {
 
       res.render("adminSide/orderDetails", { orders, subtotal });
     } catch (error) {
-      console.log(error);
+      const err = new Error(error)
+      err.statusCode = 500
+      err.error = 'An error occurred while loading the order details page'
+      return next(err)
     }
   },
-
 };

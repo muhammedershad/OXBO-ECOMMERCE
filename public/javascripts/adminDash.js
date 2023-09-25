@@ -1,4 +1,4 @@
-async function updateTotalOrder(){
+function updateTotalOrder(){
     const totalOrderFromDate = document.getElementById('totalOrderFromDate').value
     const totalOrderToDate = document.getElementById('totalOrderToDate').value
     console.log(totalOrderFromDate,totalOrderToDate);

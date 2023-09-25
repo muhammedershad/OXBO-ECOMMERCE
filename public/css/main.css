@@ -73,7 +73,7 @@ svg{
     border: solid;
     border-width: 1px;
     border-color: #040404;
-    color: rgb(255, 255, 255);
+    color: rgb(1, 1, 1);
     font-size: small;
 }
 
@@ -88,7 +88,7 @@ svg{
     font-size: small;
 }
 
-.form-label{
+/* .form-label{
     outline: none;
     box-shadow: none;
 }
@@ -96,7 +96,7 @@ svg{
 .form-label:click {
     outline: none;
     box-shadow: none;
-}
+} */
 
 #nothing-btn{
     border: 0;
@@ -132,7 +132,44 @@ svg{
     /* overflow-y: hidden;  */
 }
 
+#custom-target {
+    position: relative;
+    width: 600px;
+    height: auto;
+    border-style: solid;
+    background-color: #ffffff;
+    color: #040404;
+}
 
+.position-absolute {
+    position: absolute !important;
+}
+
+.small-swal {
+    max-width: 100px; /* Limit the maximum width */
+    font-size: 12px; /* Adjust the font size as needed */
+    text-align: center;
+    border-radius: 8px;
+    background-color: #d2d2d2; /* Background color for success message */
+    color: #fff; /* Text color for success message */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    position: fixed; /* Position the Swal popup */
+    top: 20px; /* Adjust the top position as needed */
+    right: 20px; /* Adjust the right position as needed */
+  }
+  
+  /* Style the small tick icon */
+  .small-swal::before {
+    font-size: 16px; /* Adjust the icon size as needed */
+    vertical-align: middle; /* Center the tick icon vertically */
+  }
+  
+  /* Center text within the Swal popup */
+  .small-swal .swal2-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
 
 
 
@@ -158,9 +195,9 @@ border-radius: 5px;
 
 .size-radio:checked + label {
     display: inline;
-background-color: #252729; /* Change this to your desired selected color */
-color: #fff; /* Change text color when selected */
-border-color: #131415; /* Change border color when selected */
+background-color: #252729; 
+color: #fff; 
+border-color: #131415; 
 }
 
 .progress-bar{

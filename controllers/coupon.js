@@ -3,19 +3,23 @@ const productData = require('../models/product');
 const couponData = require('../models/coupon');
 
 module.exports = {
-    couponPage : async (req,res) => {
+    couponPage : async (req, res, next) => {
         try {
             const coupons = await couponData.find();
             // console.log(coupons);
             res.render('adminSide/coupon',{coupons})
+
         } catch (error) {
-            console.log(error);
+            const err = new Error(error)
+            err.statusCode = 500
+            err.error = 'An error occurred while loading coupon management page'
+            return next(err)
         }
     },
 
-    Addcoupon : async (req,res) => {
+    Addcoupon : async (req, res, next) => {
         try {
-            const { couponCode, couponAmount, couponType, expiryDate, couponMinPurchase } = req.body;
+            const { couponCode, couponAmount, couponType, expiryDate, couponMinPurchase, couponMaxRedimableAmount } = req.body;
 
             const newCoupon = new couponData({
                 code: couponCode.toUpperCase(), 
@@ -25,42 +29,48 @@ module.exports = {
                 createdAt: Date.now(),
                 expiresAt: expiryDate, 
                 active: true,
+                maxRedimableAmount: couponMaxRedimableAmount
             });
 
             await newCoupon.save();
             res.redirect('/admin/coupon')
 
         } catch (error) {
-            console.log(error);
+            const err = new Error(error)
+            err.statusCode = 500
+            err.error = 'An error occurred while adding new coupon'
+            return next(err)
         }
     },
 
-    editCoupon : async (req,res) => {
+    editCoupon : async (req, res, next) => {
         try {
-            const {couponId, couponCode, couponAmount, couponMinPurchase, couponType, expiryDate} = req.body
+            const {couponId, couponCode, couponAmount, couponMinPurchase, couponType, expiryDate, couponMaxRedimableAmount} = req.body
 
             const coupon = await couponData.findById(couponId)
             coupon.code = couponCode.toUpperCase()
             coupon.amount = couponAmount
             coupon.type = couponType
             coupon.minPurchaseAmount = couponMinPurchase
-            coupon.expiresAt = expiryDate
+            coupon.expiresAt = expiryDate,
+            coupon.maxRedimableAmount = couponMaxRedimableAmount
 
             await coupon.save();
             res.redirect('/admin/coupon')
 
         } catch (error) {
-            console.log(error);
+            const err = new Error(error)
+            err.statusCode = 500
+            err.error = 'An error occurred while editing coupon details'
+            return next(err)
         }
     },
 
-    listCoupon : async (req,res) => {
+    listCoupon : async (req, res, next) => {
         try {
             const couponId = req.params.id;
             console.log(couponId);
             const coupon = await couponData.findById(couponId);
-            console.log(coupon);
-            console.log('hii');
 
             if (!coupon) {
                 return res.status(404).json({ success: false, message: 'category not found' });
@@ -78,11 +88,14 @@ module.exports = {
             }
             res.status(200).json({ success: true, listedStatus: coupon.active });
         } catch (error) {
-            console.log(error);
+            const err = new Error(error)
+            err.statusCode = 500
+            err.error = 'An error occurred while updating status of the coupon'
+            return next(err)
         }
     },
 
-    verifyCoupon : async (req,res) => {
+    verifyCoupon : async (req, res, next) => {
         try {
             const {couponCode,subTotal} = req.query
 
@@ -105,6 +118,9 @@ module.exports = {
                         amount = coupon.amount
                     } else {
                         amount = Math.floor(((subTotalNum*(coupon.amount))/100))
+                        if(amount > coupon.maxRedimableAmount){
+                            amount =  coupon.maxRedimableAmount
+                        }
                     }
                     req.session.coupon = amount
                     res.json({ exists: true, amount : amount });
@@ -112,7 +128,10 @@ module.exports = {
             }
 
         } catch (error) {
-            console.log(error);
+            const err = new Error(error)
+            err.statusCode = 500
+            err.error = 'An error occurred while verifying the coupon'
+            return next(err)
         }
     }
 

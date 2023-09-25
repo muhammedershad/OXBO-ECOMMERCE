@@ -1,0 +1,39 @@
+<%- include('../partials/header.ejs') %>
+
+
+<div class="container-fluid my-3 row m-0 p-0 d-flex justify-content-center">
+    <% if (user.wishlist.length === 0) { %>
+        <div class="card text-center">
+            <div class="card-body">
+                <h5 class="card-title">Your wishlist is currently empty</h5>
+                <p class="card-text">Browse our products and start adding items to your wishlist.</p>
+                <a href="/" class="btn ">Shop Now</a>
+            </div>
+        </div>
+    <% } else { %>
+        <% user.wishlist.forEach((product,index) => { %>
+            <div class="card col-md-3 col-6 mx-2 mb-2" style="width: 18rem;">
+                <a href="/product?productId=<%= product._id %>" style="height: 100%;">
+                    <img src="/<%= product.image[0] %>" class="card-img-top" alt="Product Image">
+                    <div class="card-body">
+                        <h5 class="card-title"><%= product.title %></h5>
+                        <h6 class="card-subtitle mb-2 text-muted">Rs. <%= product.MRP %></h6>
+                    </div>
+                </a>
+                <div class="card-footer d-flex justify-content-between align-items-end">
+                    <button onclick="" class="btn">Add to Cart</button>
+                    <button onclick="removeFromCart('<%= product._id %>','<%= index %>')" class="btn">Remove</button>
+                </div>
+            </div> 
+        <% }) %>
+    <% } %>
+</div>
+
+
+<script>
+    
+</script>
+
+<script src="/javascripts/wishlist.js"></script>
+
+<%- include('../partials/footer.ejs') %>

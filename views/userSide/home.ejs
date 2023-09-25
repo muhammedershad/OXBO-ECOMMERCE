@@ -1,8 +1,8 @@
-<%- include('./partials/header.ejs') %>
+<%- include('../partials/header.ejs') %>
 
 
 <div class=" mb-5 w-100 " style="">
-    <div id="carouselExampleCaptions" class="carousel slide w-100" data-bs-ride="carousel">
+    <div id="carouselExampleCaptions" class="carousel carousel-fade  slide w-100" data-bs-ride="carousel">
         <div class="carousel-indicators">
           <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
           <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="1" aria-label="Slide 2"></button>
@@ -109,33 +109,39 @@
                 </div>
             </div>
         </a>
-        <div class="col-md-3 col-6 p-1">
-            <div class="card rounded-card">
-                <img src="/images/cat6.webp" alt="Card Image" class="card-img">
-                <div class="card-img-overlay">
-                    <h5 class="card-title1">Card 2</h5>
-             
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3 col-6 p-1">
-            <div class="card rounded-card">
-                <img src="/images/cat7.webp" alt="Card Image" class="card-img">
-                <div class="card-img-overlay">
-                    <h5 class="card-title1">T-Shirt</h5>
+        <a class="col-md-3 col-6 p-1" href="/products?encodedCategory=<%= encodeURIComponent('T-shirts & Tops') %>" >
+            <div >
+                <div class="card rounded-card">
+                    <img src="/images/cat6.webp" alt="Card Image" class="card-img">
+                    <div class="card-img-overlay">
+                        <h5 class="card-title1">T-Shirt</h5>
                  
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="col-md-3 col-6 p-1">
-            <div class="card rounded-card">
-                <img src="/images/catm8.webp" alt="Card Image" class="card-img">
-                <div class="card-img-overlay ">
-                    <h5 class="card-title1">Jeans</h5>
-      
+        </a>
+        <a class="col-md-3 col-6 p-1" href="/products?encodedCategory=<%= encodeURIComponent('T-shirts & Tops') %>">
+            <div >
+                <div class="card rounded-card">
+                    <img src="/images/cat7.webp" alt="Card Image" class="card-img">
+                    <div class="card-img-overlay">
+                        <h5 class="card-title1">T-Shirt</h5>
+                     
+                    </div>
                 </div>
             </div>
-        </div>
+        </a>
+        <a class="col-md-3 col-6 p-1" href="/products?encodedCategory=<%= encodeURIComponent('Jeans') %>">
+            <div >
+                <div class="card rounded-card">
+                    <img src="/images/catm8.webp" alt="Card Image" class="card-img">
+                    <div class="card-img-overlay ">
+                        <h5 class="card-title1">Jeans</h5>
+          
+                    </div>
+                </div>
+            </div>
+        </a>
     </div>
 </div>
 
@@ -252,4 +258,4 @@
 </div>
 
 
-<%- include('./partials/footer.ejs') %>
+<%- include('../partials/footer.ejs') %>

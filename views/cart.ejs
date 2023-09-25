@@ -130,7 +130,9 @@
                                       <h5 class="card-title">Coupon code : <%= coupon.code %></h5>
                                       <button id="copyButton<%= coupon.code %>" type="button" onclick="copy('<%= coupon.code %>')" style="border: 0;background-color: rgb(206, 204, 202); border-radius: 10px;" class=" p-1 copy-button">Copy</button>
                                     </div>
-                                    <p class="card-text">Purchase for <%= coupon.minPurchaseAmount %> or more and apply this coupon to get <%= coupon.amount %> <%= coupon.type %> off.</p>
+                                    <p class="card-text">Purchase for <%= coupon.minPurchaseAmount %> or more and apply this coupon to get <%= coupon.amount %> <%= coupon.type %> off <% if (coupon.type === 'percentage') { %>
+                                     <span>upto <%= coupon.maxRedimableAmount %>/-</span>
+                                    <% } %>.</p>
                                 </div>
                             </div>
                             <% }) %>

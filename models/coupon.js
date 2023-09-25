@@ -28,6 +28,10 @@ const couponSchema = new mongoose.Schema({
     active : {
         type: Boolean,
         require : true
+    },
+    maxRedimableAmount : {
+        type : Number,
+        required : true
     }
 })
 

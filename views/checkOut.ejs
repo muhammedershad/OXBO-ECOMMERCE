@@ -305,6 +305,9 @@
               </div>
               <hr>
               <h6 class="mb-3">Select Payment Method</h6>
+              <div class="bg-light p-1 mb-2" style="background-color: rgb(61, 61, 61);">
+                <small>Choose 'Online' as your payment method to pay with your wallet.</small>
+              </div>
               <div class="form-check">
                 <input class="form-check-input" type="radio" onchange="showWalletPay()" name="paymentMethod" value="cashOnDelivery" id="cashOnDelivery" checked>
                 <label class="form-check-label" for="cashOnDelivery">Cash on Delivery</label>
@@ -323,7 +326,7 @@
               <div class="" style="display: none;" id="grandTotal">
                 <hr>
                 <div class="d-flex justify-content-between">
-                  <p class="mb-2">Grand Total:</p>
+                  <p class="mb-2">Ready to make a payment:</p>
                   <p class="mb-2 fw-bold" id="grandTotalField">₹<%= totalPrice.toFixed(2) %></p>
                 </div>
               </div>

@@ -1,9 +1,9 @@
-<%- include('./partials/header.ejs') %>
+<%- include('../partials/header.ejs') %>
 
 <div class="container-fluid my-2">
     <div class="row mx-2">
         <!-- Sidebar with filter categories -->
-        <div class="col-md-2 " style="position: sticky; top: 70px; height: 500px;">
+        <div class="col-md-2 d-md-block d-none" style="position: sticky; top: 70px; height: 500px;">
             <h5>Categories</h5>
             <ul class="list-group mb-3">
                 <% categorylist.forEach(category => { %>
@@ -80,6 +80,35 @@
 
 
             <div class="d-flex justify-content-end mb-2">
+                <button type="button" class="btn d-md-none mx-4" data-bs-toggle="modal" data-bs-target="#exampleModal">Filters</button>
+                <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h1 class="modal-title fs-5" id="exampleModalLabel">Filters</h1>
+                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <h5>Categories</h5>
+                            <ul class="list-group mb-3">
+                                <% categorylist.forEach(category => { %>
+                                    <li class="list-group-item" onclick="filterByCategory('<%= category.category %>')"><%= category.category %></li>
+                                <% }); %>
+                            </ul>
+                
+                            <h5>Filter By Price</h5>
+                            <ul class="list-group">
+                                <li class="list-group-item" onclick="filterByPrice(0,999)">₹0.00 - ₹999.00</li>
+                                <li class="list-group-item" onclick="filterByPrice(1000,1999)">₹1000.00 - ₹1999.00</li>
+                                <li class="list-group-item" onclick="filterByPrice(2000,4999)">₹2000.00 - ₹4999.00</li>
+                                <li class="list-group-item" onclick="filterByPrice(5000,9999)">₹5000.00 - ₹9999.00</li>
+                                <li class="list-group-item" onclick="filterByPrice(10000,100000)">₹10000.00 - More</li>
+                
+                            </ul>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 <select class="form-select" id="sortSelect">
                     <option selected>Sort By</option>
                     <option value="price"><button onclick="sortByPrice('<%= 1 %>','<%= category %>')">Price: Low to High</button></option>
@@ -98,9 +127,9 @@
                 </div>
             <% } %>
             
-            <div class="row products">
+            <div class="row products d-flex justify-content-center">
                 <% productlist.forEach(product => { %>
-                    <div class="card col-md-3 mx-2 mb-2" style="width: 18rem;" data-category="<%= product.category %>" data-sizes="<%=  %>">
+                    <div class="card col-md-3 col-4 mx-2 mb-2" style="width: 18rem;" data-category="<%= product.category %>" data-sizes="<%=  %>">
                         <a href="/product?productId=<%= product._id %>">
                             <img src="/<%= product.image[0] %>" class="card-img-top" alt="...">
                             <div class="card-body">
@@ -115,17 +144,17 @@
                 <nav aria-label="Page navigation">
                     <ul class="pagination">
                         <% if (currentPage > 1) { %>
-                            <li class="page-item"><a class="page-link" href="/products?page=<%= currentPage - 1 %>&gender=<%= gender %>&category=<%= category %>&number=<%= number %>&encodedSearch=<%= encodedSearch %>&min<%= min %>&max=<%= max %>">Previous</a></li>
+                            <li class="page-item"><a class="page-link bg-black" style="background-color: black;color: white;" href="/products?page=<%= currentPage - 1 %>&gender=<%= gender %>&category=<%= category %>&number=<%= number %>&encodedSearch=<%= encodedSearch %>&min<%= min %>&max=<%= max %>">Previous</a></li>
                         <% } %>
                         
                         <% for (let i = 1; i <= totalPages; i++) { %>
-                            <li class="page-item <%= i === currentPage ? 'active' : '' %>">
-                                <a class="page-link" href="/products?page=<%= i %>&gender=<%= gender %>&category=<%= category %>&number=<%= number %>&encodedSearch=<%= encodedSearch %>&min<%= min %>&max=<%= max %>"><%= i %></a>
+                            <li class="page-item <%= i === currentPage ? 'active' : '' %>" >
+                                <a class="page-link bg-black" style="background-color: black; color: white;" href="/products?page=<%= i %>&gender=<%= gender %>&category=<%= category %>&number=<%= number %>&encodedSearch=<%= encodedSearch %>&min<%= min %>&max=<%= max %>"><%= i %></a>
                             </li>
                         <% } %>
     
                         <% if (currentPage < totalPages) { %>
-                            <li class="page-item"><a class="page-link" href="/products?page=<%= currentPage + 1 %>&gender=<%= gender %>&category=<%= category %>&number=<%= number %>&encodedSearch=<%= encodedSearch %>&min<%= min %>&max=<%= max %>">Next</a></li>
+                            <li class="page-item"><a class="page-link btn-light" style="background-color: black; color: white;" href="/products?page=<%= currentPage + 1 %>&gender=<%= gender %>&category=<%= category %>&number=<%= number %>&encodedSearch=<%= encodedSearch %>&min<%= min %>&max=<%= max %>">Next</a></li>
                         <% } %>
                     </ul>
                 </nav>
@@ -134,6 +163,7 @@
     </div>
 </div>
 
-<%- include('./partials/footer.ejs') %>
 <script src="/javascripts/productFiltering.js"></script>
+<%- include('../partials/footer.ejs') %>
+
 

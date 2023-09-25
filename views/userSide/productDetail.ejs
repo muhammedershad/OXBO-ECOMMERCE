@@ -1,4 +1,4 @@
-<%- include('./partials/header.ejs') %>
+<%- include('../partials/header.ejs') %>
   <!-- content -->
   <input type="hidden" name="sizes" id="sizesInput" value="<%= product.stock %>">
   <section class="mt-4 m-0 p-0">
@@ -65,7 +65,7 @@
   
             <div class="row mb-4">
               <div class="">
-                <form id="product-form" action="/addToCart?productId=<%= product._id %>" method="post">
+                <form id="product-form" action="" method="post">
                   <label class="mb-2 d-block">Sizes Available</label>
                   <% if (product.stock.S === 0 && product.stock.M === 0 && product.stock.L === 0 && product.stock.XL === 0 && product.stock.XXL === 0) { %>
                     <small id="" class="text-danger d-block mb-1"> Currently product is out of stock</small>
@@ -77,16 +77,15 @@
                       <% const stockValue = product.stock[size]; %>
                       <% if (typeof stockValue === 'number' && stockValue > 0) { %>
                         <div class="size-option col-2">
-                          <input type="radio" name="size" id="<%= size %>" value="<%= size %>" class="size-radio">
-                          <label for="<%= size %>"><%= size %></label>
-                          <!-- <span class="stock-quantity"><%= stockValue %> in stock</span> -->
+                          <input type="radio" name="size" id="size_<%= size %>" value="<%= size %>" class="size-radio">
+                          <label for="size_<%= size %>"><%= size %></label>
                         </div>
                       <% } %>
                     <% } %>
                     
                   </div>
                   <div class="action-buttons">
-                      <button class="btn shadow-0 my-3" type="submit" onclick="addToCart()" id="add-to-cart-button">Add to Cart</button>
+                      <button class="btn shadow-0 my-3" type="submit" onclick="addToCart('<%= product._id %>')" id="add-to-cart-button">Add to Cart</button>
                 </form>
                 <button class="btn border border-secondary my-3" type="button" onclick="addToWishlist('<%= product._id %>')">Wishlist</button>
                   </div>
@@ -261,63 +260,28 @@
         </div>
       </div>
     </div>
+
+
   </section>
-
-
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
   <script>
+function hi(){
+  console.log('hii');
+  Swal.fire({
+  customClass: {
+    popup: 'small-swal', // Apply custom CSS class for styling
+  },
+  showConfirmButton: false, // Hide the confirm button
+  timer: 1500, // Auto-close after 1500 milliseconds (1.5 seconds)
+  text: 'Product added to cart', // Text for the Swal popup
+});
+}
 
-    async function addToWishlist(productId) {
-    console.log('wish');
   
-    try {
-      const response = await fetch(`/addToWishlist`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json', // Set the content type to JSON
-        },
-        body: JSON.stringify({ productId: productId }), // Convert the data to JSON format
-      });
-  
-      if (response.ok) {
-        const data = await response.json();
-        console.log(data); // Assuming the server returns JSON data
-        console.log('Product added to wishlist successfully.');
-      } else {
-        console.error('Failed to add product to wishlist.');
-      }
-    } catch (error) {
-      console.error('An error occurred:', error);
-    }
-  
-    console.log('hii');
-  }
-  
-  
-  
-  
-  function addToCart(){
-    console.log('hiii');
-      const sizeRadios = document.querySelectorAll('.size-radio');
-      const sizeError = document.getElementById('sizeError');
-  
-      event.preventDefault(); // Prevent the default form submission
-          let sizeSelected = false;
-          sizeRadios.forEach(radio => {
-              if (radio.checked) {
-                  sizeSelected = true;
-              }
-          });
-  
-          if (!sizeSelected) {
-              sizeError.textContent = 'Please select a size';
-          } else {
-              // If size is selected, submit the form
-              document.getElementById('product-form').submit();
-          }
-  }
+
   
   </script>
-
+<script src="/javascripts/productDetail.js"></script>
   <!-- Footer -->
-  <%- include('./partials/footer.ejs') %>
-  <script src="/javascripts/productDetails.js"></script>
+<%- include('../partials/footer.ejs') %>
+ 

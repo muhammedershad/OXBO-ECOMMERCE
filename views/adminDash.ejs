@@ -55,37 +55,22 @@
                     <div class="row">
                       <div class="col-8"></div>
                       <div class="col-4 mb-3">
-                        <div class="input-group">
-                          <select id="yearSelect" onchange="updateOrderPerMonth()" class="form-select">
-                              <option value="2022">2022</option>
-                              <option value="2023">2023</option>
-                              <option value="2024">2024</option>
-                              <!-- Add more years as needed -->
-                          </select>
-                        </div>
                       </div>
                     </div>
-                    <div class="ml-2 d-flex mb-3 justify-content-center">
+                    <div class="ml-2 d-flex mb-4 justify-content-center">
                       <input type="hidden" id="ordersPerMonth" value='<%= JSON.stringify(data.monthlyOrdersArray) %>'>
                       <canvas id="myChart" class="shadow"></canvas>
                     </div>
+                    <h5 class="mb-2">Monthly Total Revenue</h5>
                     <div class="ml-2 d-flex mb-3 justify-content-center">
                       <canvas id="myChart3" class="shadow"></canvas>
                     </div>
                   </div>
                   <div class="col-md-6">
-                    <h5>Orders Per Month</h5>
+                    <h5 class="text-center">Category-wise Product Sales</h5>
                     <div class="row">
                       <div class="col-8"></div>
                       <div class="col-4 mb-3">
-                        <div class="input-group">
-                          <select id="yearSelect" onchange="updateOrderPerMonth()" class="form-select">
-                              <option value="2022">2022</option>
-                              <option value="2023">2023</option>
-                              <option value="2024">2024</option>
-                              <!-- Add more years as needed -->
-                          </select>
-                        </div>
                       </div>
                     </div>
                     <div class="ml-2 d-flex justify-content-center">
@@ -94,6 +79,7 @@
                       <canvas id="myChart2" class="shadow"></canvas>
                     </div>
                   </div>
+                  
                 </div>
             </div> 
         </div>
@@ -181,28 +167,17 @@
                         "July", "August", "September", "October", "November", "December"
                       ],
               datasets: [{
-                label: 'My First Dataset',
-                data: [65, 59, 80, 81, 56, 55, 40, 55, 40, 23, 150, 10],
-                backgroundColor: [
-                  'rgba(54, 162, 235, 1)',
-                ],
-                borderColor: [
-                  'rgba(54, 162, 235, 1)'
-                ],
-                borderWidth: 0
+                label: 'Monthly Revenue',
+                data: [0, 0, 0, 0, 0, 0, 0, 5975,0, 0, 0],
+                fill: false,
+                borderColor: 'rgb(75, 192, 192)',
+                tension: 0.1
               }]
             }
 
         new Chart(ctx3, {
-          type: 'bar',
+          type: 'line',
           data: data3,
-          options: {
-                    scales: {
-                      y: {
-                        beginAtZero: true
-                      }
-                    }
-                  }
         });
 
 

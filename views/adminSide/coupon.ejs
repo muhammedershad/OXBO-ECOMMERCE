@@ -25,6 +25,7 @@
                                         <input type="text" class="form-control my-2" id="couponCode" name="couponCode" placeholder="Enter coupon code" required>
                                         <input type="text" class="form-control my-2" id="couponAmount" name="couponAmount" placeholder="Enter coupon Amount or discount percentage" required>
                                         <input type="number" class="form-control my-2" id="couponMinPurchase" name="couponMinPurchase" placeholder="Enter minimum amount of purchase" required>
+                                        <input type="number" class="form-control my-2" id="coponMaxRedimableAmount" name="couponMaxRedimableAmount" placeholder="Enter maximum redeemable amount" required>
                                         <select class="form-select mb-2" id="couponTypeSelect" name="couponType" required>
                                             <option value="amount" selected>Amount</option>
                                             <option value="percentage">Percentage</option>
@@ -88,6 +89,7 @@
                                                         <input type="text" class="form-control my-2" id="couponCode" name="couponCode" placeholder="Enter coupon code" value="<%= coupon.code %>" required>
                                                         <input type="text" class="form-control my-2" id="couponAmount" name="couponAmount" placeholder="Enter coupon Amount or discount percentage" value="<%= coupon.amount %>" required>
                                                         <input type="number" class="form-control my-2" id="couponMinPurchase" name="couponMinPurchase" placeholder="Enter minimum amount of purchase" value="<%= coupon.minPurchaseAmount %>" required>
+                                                        <input type="number" class="form-control my-2" id="coponMaxRedimableAmount" name="couponMaxRedimableAmount" placeholder="Enter maximum redeemable amount" value="<%= coupon.maxRedimableAmount %>" required>
                                                         <select class="form-select mb-2" id="couponTypeSelect" name="couponType" required>
                                                             <option value="<%= coupon.type %>" selected><%= coupon.type %></option>
                                                             <option value="amount" >Amount</option>

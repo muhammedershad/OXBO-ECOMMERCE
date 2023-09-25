@@ -79,21 +79,24 @@ const instance = new RazorPay({
 
 module.exports = {
 
-    HomePage : async (req,res) => {
+    HomePage : async (req,res,next) => {
         try {
             const banner = await bannerData.find({active : true});
             const locals = {
-                title : 'Home',
+                title : 'OXBO',
                 banner
             }
-            res.render('home',locals);
+            res.render('userSide/home',locals);
         } catch (error) {
-            console.log(error);
+            const err = new Error(error)
+            err.statusCode = 500
+            err.error = 'Error in loading home page'
+            return next(err)
         }
     
     },
 
-    loginPage : async (req,res) => {
+    loginPage : async (req,res,next) => {
         try {
             const locals = {
                 title : 'Login',
@@ -101,11 +104,14 @@ module.exports = {
             }
             res.render('Login',locals);
         } catch (error) {
-            console.log(error);
+            const err = new Error(error)
+            err.statusCode = 500
+            err.error = 'Error in loading login page.'
+            return next(err)
         }
     },
 
-    signupPage : async (req,res) => {
+    signupPage : async (req,res,next) => {
         try {
             const locals = {
                 title : 'SignUp',
@@ -113,11 +119,14 @@ module.exports = {
             }
             res.render('signup',locals);
         } catch (error) {
-            console.log(error);
+            const err = new Error(error)
+            err.statusCode = 500
+            err.error = 'Error in loading signup page.'
+            return next(err)
         }
     },
 
-    otpPage : async (req,res) => {
+    otpPage : async (req,res,next) => {
         try {
             const locals = {
                 title : 'SignUp',
@@ -125,11 +134,14 @@ module.exports = {
             }
             res.render('otp',locals);
         } catch (error) {
-            console.log(error);
+            const err = new Error(error)
+            err.statusCode = 500
+            err.error = 'Error in otp verification page.'
+            return next(err)
         }
     },
 
-    postSignup : async (req,res) => {
+    postSignup : async (req,res,next) => {
         const { email, phoneNumber, password, rePassword } = req.body;
 
         try {
@@ -141,22 +153,28 @@ module.exports = {
             await res.redirect('/otp');
 
         } catch (error) {
-            console.log(error);
+            const err = new Error(error)
+            err.statusCode = 500
+            err.error = 'Error in loading signup page.'
+            return next(err)
         }
 
     },
 
-    checkEmailExists : async (req, res) => {
+    checkEmailExists : async (req, res, next) => {
         const { email } = req.query;
         try {
             const existingUser = await userData.findOne({ email });
             res.json({ exists: !!existingUser });
         } catch (error) {
-            res.status(500).json({ error: 'Internal server error' });
+            const err = new Error(error)
+            err.statusCode = 500
+            err.error = 'Error in checking email.'
+            return next(err)
         }
     },
 
-    verifyOTP : async (req,res) => {
+    verifyOTP : async (req, res, next) => {
 
         const { enteredOTP } = req.body;
         // console.log(req.session.formData);
@@ -206,25 +224,30 @@ module.exports = {
                 res.render('otp', { error: 'incorrect_otp' });
             }
 
-        } catch (err) {
-            console.error(err);
-
+        } catch (error) {
+            const err = new Error(error)
+            err.statusCode = 500
+            err.error = 'Error in verifying otp.'
+            return next(err)
         }
 
         
     },
 
-    resendOTP : async (req,res) => {
+    resendOTP : async (req,res,next) => {
         try {
             const email = req.session.formData.email;
             await sendOTP(email);
             await res.redirect('/otp');
         } catch (error) {
-            console.log(error);
+            const err = new Error(error)
+            err.statusCode = 500
+            err.error = 'Error in resending otp.'
+            return next(err)
         }
     },
 
-    postLogin: async (req,res) => {
+    postLogin: async (req, res, next) => {
 
         try {
             const {email , password} = req.body;
@@ -258,13 +281,15 @@ module.exports = {
             }
 
         } catch (error) {
-
-            console.log(error);
+            const err = new Error(error)
+            err.statusCode = 500
+            err.error = 'Error in user login.'
+            return next(err)
         }
 
     },
 
-    forgotPassPage: async (req,res) => {
+    forgotPassPage: async (req, res, next) => {
         try {
             const locals = {
                 title : 'Login',
@@ -272,11 +297,14 @@ module.exports = {
             }
             res.render('forgotPass',locals)
         } catch (error) {
-            console.log(error);
+            const err = new Error(error)
+            err.statusCode = 500
+            err.error = 'Error in loading forgot password page.'
+            return next(err)
         }
     },
 
-    forgotPass : async (req,res) => {
+    forgotPass : async (req, res, next) => {
         try {
             const {email} = req.body;
             const user = await userData.findOne({email:email});
@@ -290,11 +318,14 @@ module.exports = {
             await res.redirect('/forgotPassOTP')
 
         } catch (error) {
-            console.log(error);
+            const err = new Error(error)
+            err.statusCode = 500
+            err.error = 'Error in loading signup page.'
+            return next(err)
         }
     },
     
-    forgotPassOTP : async (req,res) => {
+    forgotPassOTP : async (req, res, next) => {
         try {
             const locals = {
                 error : '',
@@ -302,11 +333,14 @@ module.exports = {
             }
             res.render('forgotPassOTP',locals);
         } catch (error) {
-            console.log(error);
+            const err = new Error(error)
+            err.statusCode = 500
+            err.error = 'Error in verifying otp page.'
+            return next(err)
         }
     },
 
-    forgotPassVerifyOTP : async (req,res) => {
+    forgotPassVerifyOTP : async (req, res, next) => {
         const { enteredOTP } = req.body;
         const userSession = req.session.formData;
 
@@ -343,21 +377,27 @@ module.exports = {
                 res.render('forgotPassOTP', { error: 'incorrect_otp' });
             }
 
-        } catch (err) {
-            console.error(err);
+        } catch (error) {
+            const err = new Error(error)
+            err.statusCode = 500
+            err.error = 'Error in otp verification.'
+            return next(err)
 
         }
     },
 
-    changePassPage : async (req,res) => {
+    changePassPage : async (req, res, next) => {
         try {
             res.render('changePass',{error : ''})
         } catch (error) {
-            console.log(error);
+            const err = new Error(error)
+            err.statusCode = 500
+            err.error = 'Error in loading password change page.'
+            return next(err)
         }
     },
     
-    changePass : async (req,res) => {
+    changePass : async (req, res, next) => {
         try {
             const {password} = req.body;
             const hashedPassword = await bcrypt.hash(password,10);
@@ -366,14 +406,16 @@ module.exports = {
             await res.redirect('/login');
         } catch (error) {
             res.redirect('/changePass');
-            console.log(error);
+            const err = new Error(error)
+            err.statusCode = 500
+            err.error = 'Error in changing password.'
+            return next(err)
         }
     },
 
-    productPage: async (req, res) => {
+    productPage: async (req, res, next) => {
         try {
             const { encodedCategory, encodedSubCategory, number, encodedSearch, gender, min, max } = req.query;
-            console.log(req.query);
 
             let minNum
             let maxNum
@@ -395,7 +437,6 @@ module.exports = {
             let subCategory
             if(encodedSubCategory){
                  subCategory = decodeURIComponent(encodedSubCategory);
-                 console.log(subCategory);
             }
 
             let regexPattern
@@ -477,13 +518,16 @@ module.exports = {
                 totalPages: totalPages,
             };
     
-            res.render('products', locals);
+            res.render('userSide/products', locals);
         } catch (error) {
-            console.log(error);
+            const err = new Error(error)
+            err.statusCode = 500
+            err.error = 'Error in loading product page.'
+            return next(err)
         }
     },
 
-    productPage2 : async (req,res) => {
+    productPage2 : async (req, res, next) => {
         try {
             const productlist = await productData.find({active:true,gender:'Female'});
             const categorylist = await categoryData.find({active:true,gender:'Female'});
@@ -494,35 +538,37 @@ module.exports = {
             }
             res.render('products',locals);
         } catch (error) {
-            console.log(error);
+            const err = new Error(error)
+            err.statusCode = 500
+            err.error = 'Error in loading product page.'
+            return next(err)
         }
     },
     
-    productDetail : async (req,res) => {
+    productDetail : async (req, res, next) => {
         try {
             const {productId} = req.query;
             // console.log(productId);
             const product = await productData.findById(productId)
             // console.log(product);
-            res.render('productDetail',{product})
+            res.render('userSide/productDetail',{product})
         } catch (error) {
-            console.log(error);
+            const err = new Error(error)
+            err.statusCode = 500
+            err.error = 'Error in loading product details page.'
+            return next(err)
         }
     },
 
-    addToCart : async (req,res) => {
+    addToCart : async (req, res, next) => {
         try {
-            const {productId} = req.query;
-            const {size} = req.body;
+            const {productId, size} = req.query;
+            console.log(req.query);
             const email = req.session.user
 
-            // console.log(productId);
-            // console.log(size);
-            // console.log(email);
             const user = await userData.findOne({email:email});
             const product = await productData.findOne({_id:productId});
-            // console.log(user);
-            // console.log(product);
+
             if(!user)
                 console.log('user not found');
             else{
@@ -534,6 +580,7 @@ module.exports = {
                     user.cart[existingProductIndex].subTotal += product.MRP;
                     const productAdded = await user.save();
                     // res.json({ message:!! productAdded });
+                    res.json({success : true})
                 } else {
                   
                     const product = await productData.findOne({ _id: productId });
@@ -547,52 +594,67 @@ module.exports = {
                         }
                         const productAdded = await userData.findOneAndUpdate({email:email},{$push:{cart:oneProduct}});
                         // res.json({ message:!! productAdded });
+                        res.json({success : true})
                     }
                 }
-                res.redirect(`/product?productId=${productId}`)
+                res.json({success : true})
             }
             
         } catch (error) {
-            console.log(error);
+            const err = new Error(error)
+            err.statusCode = 500
+            err.error = 'Error in product adding to cart.'
+            return next(err)
         }
     },
     
-    accountPage: async (req,res) => {
+    accountPage: async (req, res, next) => {
         try {
             const email = req.session.user
             const user = await userData.findOne({email:email});
             res.render('myAccount',{user});
         } catch (error) {
-            console.log(error);
+            const err = new Error(error)
+            err.statusCode = 500
+            err.error = 'Error in loading account page.'
+            return next(err)
         }
     },
 
-    newAddressPage : async (req,res) => {
+    newAddressPage : async (req, res, next) => {
         try {
             const email = req.session.user
             const user = await userData.findOne({email:email});
             res.render('newAddress',)
         } catch (error) {
-            console.log(error);
+            const err = new Error(error)
+            err.statusCode = 500
+            err.error = 'Error in loading address page.'
+            return next(err)
         }
     },
 
-    cartPage : async (req,res) => {
+    cartPage : async (req, res, next) => {
 
         try {
 
             const email = req.session.user
             const user = await userData.findOne({email:email})
             const coupon = await couponData.find({ active: true, expiresAt: { $gt: Date.now() } });
+            const banner = await bannerData.find({active : true})
+            const offerlist = {};
             
             // console.log(user);
             res.render('cart',{user,coupon})
         } catch (error) {
-            console.log(error);
+            const err = new Error(error)
+            err.statusCode = 500
+            err.error = 'Error in loading cart page.'
+            return next(err)
         }
     },
 
-    cartRemoveProduct : async (req,res) => {
+    cartRemoveProduct : async (req, res, next) => {
         const {userId,index} = req.query;
         try {
             // console.log(productId,index);
@@ -603,11 +665,14 @@ module.exports = {
             res.redirect('/cart')
 
         } catch (error) {
-            console.log(error);
+            const err = new Error(error)
+            err.statusCode = 500
+            err.error = 'Error in removing prodcut from cart.'
+            return next(err)
         }
     },
 
-    cartUpdateProductQuantity: async (req, res) => {
+    cartUpdateProductQuantity: async (req, res, next) => {
         try {
           const { userId, index, quantity } = req.query;
           const oneUser = await userData.findById(userId);
@@ -630,13 +695,15 @@ module.exports = {
           // Send the updated user document as a response
           res.json(updatedUser);
         } catch (error) {
-          console.log(error);
-          res.status(500).send('Internal Server Error');
+            const err = new Error(error)
+            err.statusCode = 500
+            err.error = 'Error in updating product quantity in cart'
+            return next(err)
         }
       },
       
 
-    ckeckoutPage : async (req,res) => {
+    ckeckoutPage : async (req, res, next) => {
         try {
             const email = req.session.user
             const couponAmount = req.session.coupon || 0.00;
@@ -644,11 +711,14 @@ module.exports = {
             const user = await userData.findOne({email:email});
             res.render('checkOut',{user,couponAmount})
         } catch (error) {
-            console.log(error);
+            const err = new Error(error)
+            err.statusCode = 500
+            err.error = 'Error in loading checkout page.'
+            return next(err)
         }
     },
 
-    addAddress : async (req,res) => {
+    addAddress : async (req, res, next) => {
         try {
             const { name, address, city, state, country, pincode, mobileNumber } = req.body;
             const email = req.session.user;
@@ -690,11 +760,14 @@ module.exports = {
             // console.log(user);
             res.redirect('/checkout');
         } catch (error) {
-            console.log(error);
+            const err = new Error(error)
+            err.statusCode = 500
+            err.error = 'Error in adding new address.'
+            return next(err)
         }
     },
 
-    editAddress : async (req,res) => {
+    editAddress : async (req, res, next) => {
         try {
             // console.log(req.query);
             // console.log(req.body);
@@ -714,11 +787,14 @@ module.exports = {
                 }})
                 res.redirect('/cart')
         } catch (error) {
-            console.log(error);
+            const err = new Error(error)
+            err.statusCode = 500
+            err.error = 'Error in editing address.'
+            return next(err)
         }
     },
 
-    deleteAddress : async (req,res) => {
+    deleteAddress : async (req, res, next) => {
         try {
             // console.log(req.query);
             const {userId, index} = req.query
@@ -727,11 +803,14 @@ module.exports = {
             await user.save();
             res.redirect('/checkout')
         } catch (error) {
-            console.log(error);
+            const err = new Error(error)
+            err.statusCode = 500
+            err.error = 'Error in deleting address.'
+            return next(err)
         }
     },
 
-    makeDefaultAddress : async (req,res) => {
+    makeDefaultAddress : async (req, res, next) => {
         try {
             const {userId, index} = req.query
             // console.log(userId,index);
@@ -741,16 +820,18 @@ module.exports = {
             res.redirect('/checkout')
 
         } catch (error) {
-            console.log(error);
+            const err = new Error(error)
+            err.statusCode = 500
+            err.error = 'Error in making address default.'
+            return next(err)
         }
     },
 
-    placeOrder : async (req,res) => {
+    placeOrder : async (req, res, next) => {
         try {
             const {walletSelected, paymentMethod,addressIndex,userId, discount, total} = req.body
             // console.log(paymentMethod,addressIndex,userId, discount, total);
-            console.log(req.body);
-            console.log(paymentMethod);
+
             const user = await userData.findOne({_id : userId});
 
                 const order = await new orderData({
@@ -778,7 +859,7 @@ module.exports = {
                     };
                     order.products.push(productDatas);
                   
-                    // Assuming you have a Mongoose model for your products called "Product"
+                    
                     const product = await productData.findById(cartItem.product._id);
                   
                     if (product) {
@@ -790,7 +871,7 @@ module.exports = {
                       // Save the updated product
                       await product.save();
                     }
-                  }
+                }
                   
                 await order.save();
     
@@ -851,11 +932,14 @@ module.exports = {
             
 
         } catch (error) {
-            console.log(error);
+            const err = new Error(error)
+            err.statusCode = 500
+            err.error = 'Error in placing order.'
+            return next(err)
         }
     },
 
-    orderListPage : async (req,res,next) => {
+    orderListPage : async (req, res, next) => {
         try {
             const email = req.session.user
             // console.log(email);
@@ -873,7 +957,7 @@ module.exports = {
         }
     },
 
-    logout : async (req,res) => {
+    logout : async (req, res, next) => {
         try {
             req.session.destroy((err) => {
                 if (err) {
@@ -882,11 +966,14 @@ module.exports = {
                 res.redirect('/login');
             });
         } catch (error) {
-            console.log(error);
+            const err = new Error(error)
+            err.statusCode = 500
+            err.error = 'Error in logouting user.'
+            return next(err)
         }
     },
 
-    OrderDetailsPage : async (req,res) => {
+    OrderDetailsPage : async (req, res, next) => {
         try {
             const {orderId} = req.query
             const orders = await orderData.findById(orderId).populate("products.product")
@@ -901,11 +988,14 @@ module.exports = {
 
             res.render('userSide/orderDetails',{orders,subtotal})
         } catch (error) {
-            console.log(error);
+            const err = new Error(error)
+            err.statusCode = 500
+            err.error = 'Error in loading order details page.'
+            return next(err)
         }
     },
 
-    cancelOrder : async (req,res) => {
+    cancelOrder : async (req, res, next) => {
         try {
             console.log('cancel');
             const {orderId} = req.query
@@ -926,40 +1016,48 @@ module.exports = {
             res.redirect(`/orderDetails?orderId=${orderId}`)
 
         } catch (error) {
-            console.log(error);
+            const err = new Error(error)
+            err.statusCode = 500
+            err.error = 'Error in cancelling order.'
+            return next(err)
         }
     },
 
-    addToWishlist: async (req, res) => {
+    addToWishlist: async (req, res, next) => {
         try {
+            console.log(req.body);
           const { productId } = req.body;
           const email = req.session.user;
       
-          // Use findOne to retrieve a single user document
           const user = await userData.findOne({ email: email });
       
           if (user) {
-            // Check if the productId is not already in the wishlist
             if (!user.wishlist.includes(productId)) {
-              // Push the productId into the wishlist array
+
               user.wishlist.push(productId);
-              
-              // Save the user document to update the wishlist
               await user.save();
               console.log('Product added to wishlist successfully.');
+              res.status(200).json({ message: 'Product added to wishlist successfully' });
+
             } else {
+
               console.log('Product already exists in the wishlist.');
+              res.status(200).json({ message: 'Product already exists in the wishlist' });
             }
           } else {
+
             console.log('User not found.');
+            res.status(404).json({ message: 'User not found' });
           }
         } catch (error) {
-          console.error(error);
-          res.status(500).json({ message: 'Server error' });
+            const err = new Error(error)
+            err.statusCode = 500
+            err.error = 'Error in product adding to wishlist.'
+            return next(err)
         }
     },
 
-    confirmOrder : async (req,res) => {
+    confirmOrder : async (req, res, next) => {
         try {
             const {response, orderId} = req.query;
             const email = req.session.user
@@ -982,7 +1080,7 @@ module.exports = {
         }
     },
 
-    invoicePage : async (req,res,next) => {
+    invoicePage : async (req, res, next) => {
         try {
             const orderId = req.params.orderId;
             const order = await orderData.findById(orderId).populate('products.product');
@@ -993,6 +1091,42 @@ module.exports = {
             const err = new Error(error)
             err.statusCode = 500
             err.error = 'Error in loading invoice'
+            return next(err)
+        }
+    },
+
+    wishlistPage : async (req, res, next) => {
+        try {
+            const email = req.session.user
+
+            const user = await userData.findOne({email : email}).populate('wishlist')
+            
+            res.render('userSide/wishlist', {user})
+
+        } catch (error) {
+            const err = new Error(error)
+            err.statusCode = 500
+            err.error = 'Error in loading wishlist page'
+            return next(err)
+        }
+    },
+
+    removeFromWishlist : async (req, res, next) => {
+        try {
+            const productId = req.params.productId
+            const index = req.params.index
+            const email = req.session.user
+
+            const user = await userData.findOne({email : email})
+            
+            user.wishlist.splice(index,1)
+            await user.save()
+            res.json({status : 'success'})
+
+        } catch (error) {
+            const err = new Error(error)
+            err.statusCode = 500
+            err.error = 'Error in loading wishlist page'
             return next(err)
         }
     }
