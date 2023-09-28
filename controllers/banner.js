@@ -36,6 +36,18 @@ module.exports = {
             })
             await banner.save()
 
+            const products = await productData.find({ category : bannerCategory})
+            for (const product of products) {
+                
+                const discount = Math.floor((offerPercentage / 100) * product.MRP);
+                const discountedPrice = product.MRP - discount;
+              
+                product.MRP = discountedPrice;
+              
+                // Save the updated product
+                await product.save();
+            }
+
             res.redirect('/admin/banner')
 
         } catch (error) {
@@ -56,6 +68,61 @@ module.exports = {
                 banner.image = image
             }
 
+            if(banner.category === req.body.bannerCategory && banner.offerPercentage !== req.body.offerPercentage){
+                const products = await productData.find({ category : banner.category})
+                for (const product of products) {
+                    const discount = Math.ceil((banner.offerPercentage / 100) * product.MRP);
+                    const actualPrice = product.MRP + discount;
+                    const newDiscount = Math.floor((req.body.offerPercentage / 100) * actualPrice);
+                    const discountedPrice = actualPrice - newDiscount;
+                
+                    product.MRP = discountedPrice;
+                
+                    // Save the updated product
+                    await product.save();
+                }
+            } else if ( banner.category !== req.body.bannerCategory && banner.offerPercentage === req.body.offerPercentage ){
+                const products = await productData.find({ category : banner.category})
+                for (const product of products) {
+                    const discount = Math.ceil((banner.offerPercentage / 100) * product.MRP);
+                    const actualPrice = product.MRP + discount;
+                
+                    product.MRP = actualPrice;
+                
+                    await product.save();
+                }
+
+                const products2 = await productData.find({ category : req.body.bannerCategory})
+                for (const product of products2) {
+                    const discount = Math.floor((banner.offerPercentage / 100) * product.MRP);
+                    const discountPrice = product.MRP - discount;
+                
+                    product.MRP = discountPrice;
+                
+                    await product.save();
+                }
+            } else if ( banner.category !== req.body.bannerCategory && banner.offerPercentage !== req.body.offerPercentage ){
+                const products = await productData.find({ category : banner.category})
+                for (const product of products) {
+                    const discount = Math.ceil((banner.offerPercentage / 100) * product.MRP);
+                    const actualPrice = product.MRP + discount;
+                
+                    product.MRP = actualPrice;
+                
+                    await product.save();
+                }
+
+                const products2 = await productData.find({ category : req.body.bannerCategory})
+                for (const product of products2) {
+                    const discount = Math.floor((req.body.offerPercentage / 100) * product.MRP);
+                    const discountPrice = product.MRP - discount;
+                
+                    product.MRP = discountPrice;
+                
+                    await product.save();
+                }
+            }
+
             banner.title = req.body.bannerTitle
             banner.subtitle = req.body.bannerSubtitle
             banner.category = req.body.bannerCategory
@@ -73,7 +140,19 @@ module.exports = {
 
     deleteBanner : async (req, res, next) => {
         try {
-            const {bannerId} = req.params.id
+            const bannerId = req.params.id
+            const banner = await bannerData.findById(bannerId)
+
+            const products = await productData.find({ category : banner.category})
+            for (const product of products) {
+                const discount = Math.ceil((banner.offerPercentage / 100) * product.MRP);
+                const actualPrice = product.MRP + discount;
+            
+                product.MRP = actualPrice;
+            
+                // Save the updated product
+                await product.save();
+            }
             
             await bannerData.findOneAndDelete(bannerId)
 
@@ -94,8 +173,30 @@ module.exports = {
 
             if(banner.active){
                 await bannerData.findOneAndUpdate({_id : bannerId},{$set : {active : false}})
+
+                const products = await productData.find({ category : banner.category})
+                for (const product of products) {
+                    const discount = Math.ceil((banner.offerPercentage / 100) * product.MRP);
+                    const actualPrice = product.MRP + discount;
+                
+                    product.MRP = actualPrice;
+                
+                    await product.save();
+                }
             } else {
                 await bannerData.findOneAndUpdate({_id : bannerId},{$set : {active : true}})
+
+                const products = await productData.find({ category : banner.category})
+                for (const product of products) {
+                    
+                    const discount = Math.floor((banner.offerPercentage / 100) * product.MRP);
+                    const discountedPrice = product.MRP - discount;
+                
+                    product.MRP = discountedPrice;
+                
+                    // Save the updated product
+                    await product.save();
+                }
             }
 
             res.redirect('/admin/banner')

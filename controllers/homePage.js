@@ -76,15 +76,28 @@ const instance = new RazorPay({
     key_secret: process.env.RAZORPAY_KEY_SECRET,
   });
 
+function isValidEmail(email) {
+    const emailRegex = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
+    return emailRegex.test(email);
+}
+
 
 module.exports = {
 
     HomePage : async (req,res,next) => {
         try {
             const banner = await bannerData.find({active : true});
+
+            let user = {};
+            if (req.session.user) {
+                user = await userData.findOne({ email: req.session.user }) || {};
+            }
+            
+            console.log(user);
             const locals = {
                 title : 'OXBO',
-                banner
+                banner,
+                user : user
             }
             res.render('userSide/home',locals);
         } catch (error) {
@@ -98,11 +111,18 @@ module.exports = {
 
     loginPage : async (req,res,next) => {
         try {
+            const email = req.session.user
+            const user = {}
             const locals = {
                 title : 'Login',
-                error:''
+                error: '',
+                user : user
+            }
+            if(req.query.message){
+                locals.error = req.query.message
             }
             res.render('Login',locals);
+
         } catch (error) {
             const err = new Error(error)
             err.statusCode = 500
@@ -111,11 +131,61 @@ module.exports = {
         }
     },
 
+    postLogin: async (req, res, next) => {
+
+        try {
+            const {email , password} = req.body;
+
+            if (!isValidEmail(email)) {
+                return res.redirect('/login?message=invalid_email')
+            }
+
+            const user = await userData.findOne({email : email});
+            if(!user){
+                return res.redirect('login?message=user_not_found')
+            }
+            
+            const passMatch = await bcrypt.compare(password, user.password);
+            if (passMatch) {
+
+                if(user.Blocked){
+                    return res.redirect('login?message=user_blocked')
+
+                } else {
+                    
+                    req.session.user = email;
+                    res.cookie('name', 'express');
+
+                    const redirectTo = req.session.url || '/';
+                    console.log(req.session.url);
+                    delete req.session.url;
+                    res.redirect(redirectTo);
+                }
+                
+            } else {
+
+                return res.redirect('login?message=incorrect_pass')
+            }
+
+        } catch (error) {
+            const err = new Error(error)
+            err.statusCode = 500
+            err.error = 'Error in user login.'
+            return next(err)
+        }
+
+    },
+
     signupPage : async (req,res,next) => {
         try {
+            const user = {}
             const locals = {
                 title : 'SignUp',
                 error:'',
+                user
+            }
+            if(req.query.message === 'invalid_email'){
+                locals.error = 'invalid_email'
             }
             res.render('signup',locals);
         } catch (error) {
@@ -128,9 +198,11 @@ module.exports = {
 
     otpPage : async (req,res,next) => {
         try {
+            const user = {}
             const locals = {
                 title : 'SignUp',
                 error: '',
+                user
             }
             res.render('otp',locals);
         } catch (error) {
@@ -145,6 +217,26 @@ module.exports = {
         const { email, phoneNumber, password, rePassword } = req.body;
 
         try {
+
+            if (!isValidEmail(email)) {
+                return res.redirect('/signup?message=invalid_email')
+            }
+
+            phoneNumber = phoneNumber.trim();
+            const phonePattern = /^[0-9]{10}$/;
+
+            if (!phonePattern.test(phoneNumber)) {
+                return res.redirect('/signup?message=invalid_phoneNumber')
+            } 
+
+            if (password.trim().length < 8) {
+                return res.redirect('/signup?message=invalid_password')
+            } 
+            if (password.trim() !== rePassword.trim()) {
+                return res.redirect('/signup?message=password_not_matching')
+            } 
+
+
             const hashedPassword = await bcrypt.hash(password,10);
             req.session.formData = { email, phoneNumber, password : hashedPassword}
 
@@ -247,53 +339,13 @@ module.exports = {
         }
     },
 
-    postLogin: async (req, res, next) => {
-
-        try {
-            const {email , password} = req.body;
-
-            const user = await userData.findOne({email : email});
-            
-            const passMatch = await bcrypt.compare(password, user.password);
-            if (passMatch) {
-
-                if(user.Blocked){
-                    const locals = {
-                        title : 'Login',
-                        error:'user_blocked'
-                    }
-                    res.render('Login',locals);
-                } else {
-                    
-                    req.session.user = email;
-                    // console.log(req.session, 'login');
-                    res.cookie('name', 'express');
-
-                    const redirectTo = req.session.url || '/';
-                    console.log(req.session.url);
-                    delete req.session.url;
-                    res.redirect(redirectTo);
-                }
-                
-            } else {
-                // Passwords do not match, inform the user
-                return res.render('login', { error: 'incorrect_pass' });
-            }
-
-        } catch (error) {
-            const err = new Error(error)
-            err.statusCode = 500
-            err.error = 'Error in user login.'
-            return next(err)
-        }
-
-    },
-
     forgotPassPage: async (req, res, next) => {
         try {
+            const user = {}
             const locals = {
                 title : 'Login',
-                error : ''
+                error : '',
+                user
             }
             res.render('forgotPass',locals)
         } catch (error) {
@@ -327,9 +379,11 @@ module.exports = {
     
     forgotPassOTP : async (req, res, next) => {
         try {
+            const user = {}
             const locals = {
                 error : '',
-                title : 'login'
+                title : 'login',
+                user
             }
             res.render('forgotPassOTP',locals);
         } catch (error) {
@@ -388,7 +442,8 @@ module.exports = {
 
     changePassPage : async (req, res, next) => {
         try {
-            res.render('changePass',{error : ''})
+            const user = {}
+            res.render('changePass',{error : '',user})
         } catch (error) {
             const err = new Error(error)
             err.statusCode = 500
@@ -503,7 +558,8 @@ module.exports = {
             } else {
                 categorylist = await categoryData.find({ active: true });
             }
-    
+
+            const user = {}
             const locals = {
                 min,
                 max,
@@ -516,6 +572,7 @@ module.exports = {
                 title: 'Mens',
                 currentPage: currentPage,
                 totalPages: totalPages,
+                user
             };
     
             res.render('userSide/products', locals);
@@ -547,11 +604,12 @@ module.exports = {
     
     productDetail : async (req, res, next) => {
         try {
+            const user = {}
             const {productId} = req.query;
             // console.log(productId);
             const product = await productData.findById(productId)
             // console.log(product);
-            res.render('userSide/productDetail',{product})
+            res.render('userSide/productDetail',{product,user})
         } catch (error) {
             const err = new Error(error)
             err.statusCode = 500

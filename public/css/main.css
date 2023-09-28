@@ -42,9 +42,30 @@ svg{
     background-color: rgb(255, 255, 255);
     width: 20px;
     height: 20px;
-    margin: 15px;
+    margin: 0px 15px 0 15px;
     color: rgb(46, 39, 39);
 }
+
+.wishlist-icon {
+    position: relative;
+    display: inline-block; /* Make the container inline-block to make it merge with the SVG */
+  }
+  
+  /* Style for the badge itself */
+  .wishlist-badge {
+    position: absolute;
+    top: -5px; /* Adjust the vertical position as needed */
+    right: 2px; /* Adjust the horizontal position as needed */
+    background-color: #685c5c; /* Background color for the badge */
+    color: white; /* Text color for the badge */
+    border-radius: 50%; /* Make it circular */
+    width: 20px; /* Width of the badge */
+    height: 20px; /* Height of the badge */
+    text-align: center;
+    font-size: 14px; /* Adjust the font size as needed */
+    line-height: 20px; /* Center text vertically */
+    z-index: 1; /* Ensure it's above the SVG */
+  }
 
 .btn{
     padding: 6px 15px 6px 15px ;
@@ -149,6 +170,7 @@ svg{
     max-width: 100px; /* Limit the maximum width */
     font-size: 12px; /* Adjust the font size as needed */
     text-align: center;
+    align-items: center;
     border-radius: 8px;
     background-color: #d2d2d2; /* Background color for success message */
     color: #fff; /* Text color for success message */
@@ -156,48 +178,48 @@ svg{
     position: fixed; /* Position the Swal popup */
     top: 20px; /* Adjust the top position as needed */
     right: 20px; /* Adjust the right position as needed */
-  }
-  
-  /* Style the small tick icon */
-  .small-swal::before {
+}
+
+/* Style the small tick icon */
+.small-swal::before {
     font-size: 16px; /* Adjust the icon size as needed */
     vertical-align: middle; /* Center the tick icon vertically */
-  }
-  
-  /* Center text within the Swal popup */
-  .small-swal .swal2-content {
+}
+
+/* Center text within the Swal popup */
+.small-swal .swal2-content {
     display: flex;
     align-items: center;
     justify-content: center;
-  }
+}
 
 
 
 .size-option {
-display: inline-flex;
-margin-right: 10px;
+    display: inline-flex;
+    margin-right: 10px;
 }
 
 .size-radio {
-display: none;
+    display: none;
 }
 
 .size-radio + label {
-display: flex;
-justify-content: center;
-padding: 8px 12px;
-height: 40px;
-width: 60px;
-border: 1px solid #ccc;
-cursor: pointer;
-border-radius: 5px;
+    display: flex;
+    justify-content: center;
+    padding: 8px 12px;
+    height: 40px;
+    width: 60px;
+    border: 1px solid #ccc;
+    cursor: pointer;
+    border-radius: 5px;
 }
 
 .size-radio:checked + label {
     display: inline;
-background-color: #252729; 
-color: #fff; 
-border-color: #131415; 
+    background-color: #252729; 
+    color: #fff; 
+    border-color: #131415; 
 }
 
 .progress-bar{

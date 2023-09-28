@@ -1,8 +1,20 @@
+const userData = require('../models/user');
+
 module.exports = {
-    auth : (req,res,next) => {
+    auth : async (req,res,next) => {
         try {
             if(req.session.user){
-                next();
+                const user = await userData.findOne({email : req.session.user})
+                if(!user)
+                    return res.redirect('/login?message=user_not_found');
+                else {
+                    if(user.Blocked){
+                        req.session.destroy();
+                        return res.redirect('/login?message=user_blocked');
+                    } else {
+                        next();
+                    }
+                }
             } else {
                 req.session.url = req.originalUrl
                 res.redirect('/login');

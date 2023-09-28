@@ -21,7 +21,7 @@
                     </div>
                 </a>
                 <div class="card-footer d-flex justify-content-between align-items-end">
-                    <button onclick="" class="btn">Add to Cart</button>
+                    <button onclick="selectSize('<%= product._id %>','<%= product.stock %>')" class="btn">Add to Cart</button>
                     <button onclick="removeFromCart('<%= product._id %>','<%= index %>')" class="btn">Remove</button>
                 </div>
             </div> 
@@ -31,6 +31,41 @@
 
 
 <script>
+
+async function selectSize(productId, stock) {
+    try {
+        // Parse the stock JSON string into an object
+        const availableSizes = JSON.parse(stock);
+
+        const inputOptions = Object.keys(availableSizes).reduce((options, size) => {
+          if (typeof availableSizes[size] === 'number' && availableSizes[size] > 0) {
+            options[size] = size;
+          }
+          return options;
+        }, {});
+
+        const { value: selectedSize } = await Swal.fire({
+          title: 'Select Size',
+          input: 'radio',
+          inputOptions: inputOptions,
+          inputValidator: (value) => {
+            if (!value) {
+              return 'You need to choose a size!';
+            }
+          }
+        });
+
+        if (selectedSize) {
+          Swal.fire({ html: `You selected size: ${selectedSize}` });
+          // Now you can perform additional actions, like adding the selected size to the cart.
+        }
+      } catch (error) {
+        console.error('Error parsing stock:', error);
+      }
+}
+
+
+
     
 </script>
 

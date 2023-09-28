@@ -24,6 +24,8 @@
                 <!-- Display error messages using EJS if statements -->
                 <% if (error === 'user_not_found') { %>
                     <div class="text-danger mb-3">User not found.</div>
+                <% } else if (error === 'invalid_email') { %>
+                    <div class="text-danger mb-3">Enter a valid email</div>
                 <% } else if (error === 'incorrect_pass') { %>
                     <div class="text-danger mb-3">Incorrect password. Please check your password and try again..</div>
                 <% } else if (error === 'save_failed') { %>

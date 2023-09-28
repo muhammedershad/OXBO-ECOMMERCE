@@ -77,12 +77,13 @@
 function filterByCategory(category){
     console.log(category);
     const gender = document.getElementById('genderInput').value
+    const encodedSearch = document.getElementById('encodedSearchInput').value
     const min = document.getElementById('minInput').value
     const max = document.getElementById('maxInput').value
     console.log(min,max);
     const encodedCategory = encodeURIComponent(category);
     
-    window.location.href = `/products?encodedCategory=${encodedCategory}&gender=${gender}&min=${min}&max=${max}`
+    window.location.href = `/products?encodedCategory=${encodedCategory}&gender=${gender}&min=${min}&max=${max}&encodedSearch=${encodedSearch}`
 }
 
 

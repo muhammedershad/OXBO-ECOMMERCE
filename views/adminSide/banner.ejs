@@ -112,11 +112,11 @@
                                     </div>
                                 </td>
                                 <td>
-                                    <button class="btn" id="categoryBtn" data-id="<%= banner._id %>" data-bs-toggle="modal" data-bs-target="#listConfirmationModal">
+                                    <button class="btn" id="categoryBtn" data-id="<%= banner._id %>" data-bs-toggle="modal" data-bs-target="#listConfirmationModal<%= banner._id %>">
                                         <%= banner.active ? 'Unlist' : 'List' %>
                                     </button>
 
-                                    <div class="modal fade" id="listConfirmationModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                    <div class="modal fade" id="listConfirmationModal<%= banner._id %>" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                                         <div class="modal-dialog">
                                             <div class="modal-content">
                                             <div class="modal-header">
@@ -135,11 +135,11 @@
                                     </div>
                                 </td>
                                 <td>
-                                    <button class="btn" id="categoryBtn" data-bs-toggle="modal" data-banner-id="<%= banner._id %>" data-bs-target="#deleteConfirmationModal"> 
+                                    <button class="btn" id="categoryBtn" data-bs-toggle="modal" data-banner-id="<%= banner._id %>" data-bs-target="#deleteConfirmationModal<%= banner._id %>"> 
                                         Delete
                                     </button>
-
-                                    <div class="modal fade" id="deleteConfirmationModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                
+                                    <div class="modal fade" id="deleteConfirmationModal<%= banner._id %>" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                                         <div class="modal-dialog">
                                             <div class="modal-content">
                                             <div class="modal-header">
@@ -147,7 +147,7 @@
                                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                             </div>
                                             <div class="modal-body">
-                                                Are you really want to delete this?
+                                                Are you sure you want to delete this?
                                             </div>
                                             <div class="modal-footer">
                                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -164,36 +164,7 @@
             </div>
         </div>
 
-    <script>
-        async function deleteBanner(bannerId) {
-            console.log(bannerId);
-            try {
-
-                fetch(`/admin/banner/${bannerId}`,{
-                    method:"DELETE",
-                })
-                window.location.reload();
-
-            } catch (error) {
-                console.error('An error occurred:', error);
-            }
-        }
-
-        async function listBanner(bannerId) {
-            console.log(bannerId);
-            try {
-
-                fetch(`/admin/banner/${bannerId}`,{
-                    method:"PATCH",
-                })
-                window.location.reload();
-
-            } catch (error) {
-                console.error('An error occurred:', error);
-            }
-        }
-    </script>
-    
+    <script src="/javascripts/banner.js"></script>
     <script src="/javascripts/dash.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
    

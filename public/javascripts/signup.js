@@ -18,11 +18,11 @@ document.addEventListener('DOMContentLoaded', () => {
     //     }
     // });
 
-    form.addEventListener('submit', async (event) => {
-        if (!validateForm()) {
-            event.preventDefault();
-        }
-    });
+    // form.addEventListener('submit', async (event) => {
+    //     if (!validateForm()) {
+    //         event.preventDefault();
+    //     }
+    // });
 
     function validateEmail() {
         const emailField = document.getElementById('email');
@@ -125,7 +125,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
-        submitButton.disabled = !isValid;
+        // submitButton.disabled = !isValid;
         return isValid;
     }
 

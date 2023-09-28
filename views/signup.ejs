@@ -34,22 +34,34 @@
                     <div class="mb-3">
                         <label for="email" class="form-label">Email</label>
                         <input type="email" class="form-control" name="email" id="email" placeholder="Enter your email">
+                        <% if (error === 'invalid_email') { %>
+                            <small class="text-danger">Enter a valid email</small>
+                          <% } %>
                         <small id="emailError" class="text-danger"></small>
                     </div>
                     <div class="mb-3">
                         <label for="phoneNumber" class="form-label">Phone Number</label>
                         <input type="tel" class="form-control" name="phoneNumber" id="phoneNumber" placeholder="Enter your phone number">
                         <small id="phoneError" class="text-danger"></small>
+                        <% if (error === 'invalid_phoneNumber') { %>
+                            <small class="text-danger">Enter a valid phone number</small>
+                          <% } %>
                     </div>
                     <div class="mb-3">
                         <label for="password" class="form-label">Password</label>
                         <input type="password" class="form-control" name="password" id="password" placeholder="Enter your password">
                         <small id="passwordError" class="text-danger"></small>
+                        <% if (error === 'invalid_password') { %>
+                            <small class="text-danger">Create a strong password with a minimum length of 8 characters, including a mixture of numbers and symbols.</small>
+                          <% } %>
                     </div>
                     <div class="mb-3">
                         <label for="rePassword" class="form-label">Re-enter Password</label>
                         <input type="password" class="form-control" name="rePassword" id="rePassword" placeholder="Re-enter your password">
                         <small id="rePasswordError" class="text-danger"></small>
+                        <% if (error === 'password_not_matching') { %>
+                            <small class="text-danger">Ensure that both entered passwords match each other.</small>
+                          <% } %>
                     </div>
                     <!-- <button type="submit" class="btn btn-primary w-100" id="submitButton" disabled >Request OTP</button> -->
                     <button type="submit" class="btn" id="submitButton" >Request OTP</button>
