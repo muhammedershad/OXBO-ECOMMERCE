@@ -1,12 +1,12 @@
 module.exports = {
     404 : (req,res)=>{
-        const user = {}
-        res.render('404',{})
+        let user
+        return res.render('404',{user})
     },
 
     500 : (err,req,res,next) => {
-        const user = {}
+        let user
         console.log(err);
-        res.render('500',{err, user})
+        return res.render('500',{err, user})
     }
 }

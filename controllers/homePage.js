@@ -25,7 +25,7 @@ async function sendOTP(email) {
 
     // Generate a random OTP
     const otp = Math.floor(100000 + Math.random() * 900000);
-    console.log('otp:',otp);
+    // console.log('otp:',otp);
     try {
         stringOTP = otp.toString();
         const hashedOTP = await bcrypt.hash(stringOTP,10);
@@ -88,16 +88,15 @@ module.exports = {
         try {
             const banner = await bannerData.find({active : true});
 
-            let user = {};
+            let user
             if (req.session.user) {
-                user = await userData.findOne({ email: req.session.user }) || {};
+                user = await userData.findOne({ email: req.session.user });
             }
             
-            console.log(user);
             const locals = {
                 title : 'OXBO',
                 banner,
-                user : user
+                user
             }
             res.render('userSide/home',locals);
         } catch (error) {
@@ -111,12 +110,12 @@ module.exports = {
 
     loginPage : async (req,res,next) => {
         try {
+            let user
             const email = req.session.user
-            const user = {}
             const locals = {
                 title : 'Login',
                 error: '',
-                user : user
+                user
             }
             if(req.query.message){
                 locals.error = req.query.message
@@ -156,10 +155,7 @@ module.exports = {
                     req.session.user = email;
                     res.cookie('name', 'express');
 
-                    const redirectTo = req.session.url || '/';
-                    console.log(req.session.url);
-                    delete req.session.url;
-                    res.redirect(redirectTo);
+                    res.redirect('/');
                 }
                 
             } else {
@@ -178,14 +174,14 @@ module.exports = {
 
     signupPage : async (req,res,next) => {
         try {
-            const user = {}
+            let user
             const locals = {
                 title : 'SignUp',
                 error:'',
                 user
             }
-            if(req.query.message === 'invalid_email'){
-                locals.error = 'invalid_email'
+            if(req.query.message){
+                locals.error = req.query.message
             }
             res.render('signup',locals);
         } catch (error) {
@@ -198,11 +194,14 @@ module.exports = {
 
     otpPage : async (req,res,next) => {
         try {
-            const user = {}
+            let user
             const locals = {
                 title : 'SignUp',
                 error: '',
                 user
+            }
+            if(req.query.message){
+                locals.error = req.query.message
             }
             res.render('otp',locals);
         } catch (error) {
@@ -220,12 +219,16 @@ module.exports = {
 
             if (!isValidEmail(email)) {
                 return res.redirect('/signup?message=invalid_email')
+            } else {
+                const existingUser = await userData.findOne({ email });
+                if(existingUser){
+                    return res.redirect('/signup?message=email_already_exists')
+                }
             }
 
-            phoneNumber = phoneNumber.trim();
             const phonePattern = /^[0-9]{10}$/;
 
-            if (!phonePattern.test(phoneNumber)) {
+            if (!phonePattern.test(phoneNumber.trim())) {
                 return res.redirect('/signup?message=invalid_phoneNumber')
             } 
 
@@ -245,6 +248,7 @@ module.exports = {
             await res.redirect('/otp');
 
         } catch (error) {
+            console.log(error);
             const err = new Error(error)
             err.statusCode = 500
             err.error = 'Error in loading signup page.'
@@ -271,6 +275,10 @@ module.exports = {
         const { enteredOTP } = req.body;
         // console.log(req.session.formData);
         const userSession = req.session.formData;
+
+        if (enteredOTP.trim().length !== 6 || isNaN(enteredOTP)) {
+            return res.redirect('/otp?message=incorrect_otp');
+        }
         
         // console.log('entered otp:',enteredOTP);
 
@@ -304,19 +312,20 @@ module.exports = {
                     wallet: 0,
                     });
                     await newUser.save();
-                    console.log('user data saved');
+                    // console.log('user data saved');
                     await res.redirect('/login');
                 } else {
                     return res.render('otp', { error: 'timeout_otp' });
                 }
     
             }else{
-                console.log('Entered OTP is incorrect');
+                // console.log('Entered OTP is incorrect');
                 // Redirect to the OTP page with an error message
-                res.render('otp', { error: 'incorrect_otp' });
+                res.redirect('/otp?message=incorrect_otp');
             }
 
         } catch (error) {
+            console.log(error);
             const err = new Error(error)
             err.statusCode = 500
             err.error = 'Error in verifying otp.'
@@ -341,7 +350,7 @@ module.exports = {
 
     forgotPassPage: async (req, res, next) => {
         try {
-            const user = {}
+            let User
             const locals = {
                 title : 'Login',
                 error : '',
@@ -379,7 +388,7 @@ module.exports = {
     
     forgotPassOTP : async (req, res, next) => {
         try {
-            const user = {}
+            let user
             const locals = {
                 error : '',
                 title : 'login',
@@ -442,7 +451,7 @@ module.exports = {
 
     changePassPage : async (req, res, next) => {
         try {
-            const user = {}
+            let user
             res.render('changePass',{error : '',user})
         } catch (error) {
             const err = new Error(error)
@@ -559,7 +568,11 @@ module.exports = {
                 categorylist = await categoryData.find({ active: true });
             }
 
-            const user = {}
+            let user
+            if(req.session.user){
+                const {email} = req.session.user
+                user = await userData.findOne({ email : email})
+            }
             const locals = {
                 min,
                 max,
@@ -604,7 +617,11 @@ module.exports = {
     
     productDetail : async (req, res, next) => {
         try {
-            const user = {}
+            let user
+            if(req.session.user){
+                const {email} = req.session.user
+                user = await userData.findOne({ email : email})
+            }
             const {productId} = req.query;
             // console.log(productId);
             const product = await productData.findById(productId)
@@ -621,7 +638,6 @@ module.exports = {
     addToCart : async (req, res, next) => {
         try {
             const {productId, size} = req.query;
-            console.log(req.query);
             const email = req.session.user
 
             const user = await userData.findOne({email:email});
@@ -638,7 +654,7 @@ module.exports = {
                     user.cart[existingProductIndex].subTotal += product.MRP;
                     const productAdded = await user.save();
                     // res.json({ message:!! productAdded });
-                    res.json({success : true})
+                    return res.json({success : true})
                 } else {
                   
                     const product = await productData.findOne({ _id: productId });
@@ -652,10 +668,10 @@ module.exports = {
                         }
                         const productAdded = await userData.findOneAndUpdate({email:email},{$push:{cart:oneProduct}});
                         // res.json({ message:!! productAdded });
-                        res.json({success : true})
+                        return res.json({success : true})
                     }
                 }
-                res.json({success : true})
+                return res.json({success : true})
             }
             
         } catch (error) {
@@ -693,16 +709,13 @@ module.exports = {
     },
 
     cartPage : async (req, res, next) => {
-
         try {
-
             const email = req.session.user
             const user = await userData.findOne({email:email})
             const coupon = await couponData.find({ active: true, expiresAt: { $gt: Date.now() } });
             const banner = await bannerData.find({active : true})
             const offerlist = {};
             
-            // console.log(user);
             res.render('cart',{user,coupon})
         } catch (error) {
             const err = new Error(error)

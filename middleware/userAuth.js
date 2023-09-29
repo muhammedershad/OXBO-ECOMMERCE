@@ -17,7 +17,7 @@ module.exports = {
                 }
             } else {
                 req.session.url = req.originalUrl
-                res.redirect('/login');
+                return res.redirect('/login');
             }
         } catch (error) {
             console.log(error);

@@ -21,7 +21,7 @@
                     </div>
                 </a>
                 <div class="card-footer d-flex justify-content-between align-items-end">
-                    <button onclick="selectSize('<%= product._id %>','<%= product.stock %>')" class="btn">Add to Cart</button>
+                    <button onclick='selectSize("<%= product._id %>","<%= product.stock %>","<%= index %>")' class="btn">Add to Cart</button>
                     <button onclick="removeFromCart('<%= product._id %>','<%= index %>')" class="btn">Remove</button>
                 </div>
             </div> 
@@ -32,36 +32,89 @@
 
 <script>
 
-async function selectSize(productId, stock) {
-    try {
-        // Parse the stock JSON string into an object
-        const availableSizes = JSON.parse(stock);
+async function selectSize(productId, stock, index) {
+  console.log(productId, stock);
+  console.log(typeof stock);
 
-        const inputOptions = Object.keys(availableSizes).reduce((options, size) => {
-          if (typeof availableSizes[size] === 'number' && availableSizes[size] > 0) {
-            options[size] = size;
-          }
-          return options;
-        }, {});
+  const keyValuePairs = stock
+    .slice(1, -1) // Remove the curly braces
+    .split(',')
+    .map(pair => pair.trim()); // Remove leading/trailing whitespaces
 
-        const { value: selectedSize } = await Swal.fire({
-          title: 'Select Size',
-          input: 'radio',
-          inputOptions: inputOptions,
-          inputValidator: (value) => {
-            if (!value) {
-              return 'You need to choose a size!';
-            }
-          }
-        });
+  console.log(keyValuePairs);
+  const stockObject = {};
 
-        if (selectedSize) {
-          Swal.fire({ html: `You selected size: ${selectedSize}` });
-          // Now you can perform additional actions, like adding the selected size to the cart.
-        }
-      } catch (error) {
-        console.error('Error parsing stock:', error);
+  keyValuePairs.forEach(pair => {
+    const [key, value] = pair.split(':').map(item => item.trim());
+    stockObject[key] = parseInt(value);
+  });
+
+  console.log(stockObject);
+
+  const sizeMapping = {};
+
+  for (const size in stockObject) {
+    if (typeof stockObject[size] === 'number' && stockObject[size] > 0) {
+      sizeMapping[size] = size;
+    }
+  }
+
+
+  const inputOptions = new Promise((resolve) => {
+    setTimeout(() => {
+      resolve(sizeMapping)
+    }, 1000)
+  })
+
+  const { value: size } = await Swal.fire({
+    title: 'Select size',
+    input: 'radio',
+    inputOptions: inputOptions,
+    inputValidator: (value) => {
+      if (!value) {
+        return 'You need to choose something!'
       }
+    }
+  })
+
+  if (size) {
+    Swal.fire({ html: `You selected: ${size}`})
+    
+
+    const response = await fetch(`/addToCart?productId=${productId}&size=${size}`, {
+            method: 'POST',
+            body: JSON.stringify({ size })
+            });
+
+            if (response.ok) {
+            const responseData = await response.json();
+
+            if (responseData.success) {
+                Swal.fire({
+                text: 'Product added to the cart',
+                target: '#custom-target',
+                customClass: {
+                    container: 'position-absolute'
+                },
+                toast: true,
+                position: 'top-right',
+                timer: 2000, // Close the toast after 2 seconds
+                showConfirmButton: false // Hide the "OK" button
+                });
+
+                const response = await fetch(`/removeFromWishlist/${productId}/${index}`,{
+                    method : 'DELETE',
+                })
+                window.location.reload()
+            } else {
+                // Handle the case where success is not true in the response, if needed.
+                console.log('Product not added to the cart');
+            }
+            } else {
+            // Handle the case where the fetch request itself was not successful, if needed.
+            console.error('Failed to add product to the cart');
+            }
+  }
 }
 
 

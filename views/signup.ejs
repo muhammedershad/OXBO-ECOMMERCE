@@ -37,6 +37,9 @@
                         <% if (error === 'invalid_email') { %>
                             <small class="text-danger">Enter a valid email</small>
                           <% } %>
+                        <% if (error === 'email_already_exists') { %>
+                            <small class="text-danger">Email already registered. Please proceed to login or use a different email.</small>
+                          <% } %>
                         <small id="emailError" class="text-danger"></small>
                     </div>
                     <div class="mb-3">

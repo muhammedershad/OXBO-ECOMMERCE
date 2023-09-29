@@ -510,9 +510,11 @@ module.exports = {
 
   loginPage: async (req, res, next) => {
     try {
+      let user
       const locals = {
         title: "Admin Login",
         error: "",
+        user
       };
       res.render("adminLogin", locals);
 

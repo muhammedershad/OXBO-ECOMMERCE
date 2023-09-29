@@ -4,7 +4,7 @@ module.exports = {
             if(req.session.admin){
                 next();
             } else {
-                res.redirect('/admin/login');
+                return res.redirect('/admin/login');
             }
         } catch (error) {
             console.log(error);

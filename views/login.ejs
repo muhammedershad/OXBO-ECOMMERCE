@@ -23,7 +23,7 @@
                 </div>
                 <!-- Display error messages using EJS if statements -->
                 <% if (error === 'user_not_found') { %>
-                    <div class="text-danger mb-3">User not found.</div>
+                    <div class="text-danger mb-3">Email address not registered. Please check your input.</div>
                 <% } else if (error === 'invalid_email') { %>
                     <div class="text-danger mb-3">Enter a valid email</div>
                 <% } else if (error === 'incorrect_pass') { %>
