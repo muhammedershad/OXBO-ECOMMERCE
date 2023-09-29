@@ -20,11 +20,11 @@
                 </div>
                 <!-- Display error messages using EJS if statements -->
                 <% if (error === 'user_not_found') { %>
-                    <div class="text-danger mb-3">Admin not found.</div>
+                    <div class="text-danger mb-3">Admin not found. Check your email.</div>
                 <% } else if (error === 'incorrect_pass') { %>
                     <div class="text-danger mb-3">Incorrect password. Please check your password and try again..</div>
-                <% } else if (error === 'save_failed') { %>
-                    <div class="text-danger mb-3">Failed to save user data.</div>
+                <% } else if (error === 'invalid_username_password') { %>
+                    <div class="text-danger mb-3">Incorrect email or password.</div>
                 <% } else if (error === 'user_blocked') { %>
                     <div class="text-danger mb-3">User has been blocked by the administrator. For further assistance, please contact the admin.</div>
                 <% } %>

@@ -516,6 +516,9 @@ module.exports = {
         error: "",
         user
       };
+      if(req.query.message){
+        locals.error = req.query.message
+      }
       res.render("adminLogin", locals);
 
     } catch (error) {
@@ -532,8 +535,12 @@ module.exports = {
 
       const existingAdmin = await admin.findOne({ email });
 
+      if(email==='' || password === ''){
+        return res.redirect('/admin/login?message=invalid_username_password')
+      }
+
       if (!existingAdmin) {
-        return res.render("adminLogin", { error: "user_not_found" });
+        return res.redirect("/admin/login?message=user_not_found");
       }
 
       const isPasswordValid = await bcrypt.compare(
@@ -548,7 +555,7 @@ module.exports = {
 
         return res.redirect("/admin");
       } else {
-        return res.render("adminLogin", { error: "incorrect_pass" });
+        return res.redirect("/admin/login?message=incorrect_pass");
       }
 
     } catch (error) {
@@ -576,11 +583,9 @@ module.exports = {
       if (user.Blocked) {
         await users.updateOne({ _id: itemId }, { $set: { Blocked: false } });
         user.Blocked = false;
-        console.log("jhsdjjgsfd");
       } else {
         await users.updateOne({ _id: itemId }, { $set: { Blocked: true } });
         user.Blocked = true;
-        console.log("BLOCKED");
       }
 
       res.status(200).json({ success: true, blockedStatus: user.Blocked });
@@ -607,12 +612,9 @@ module.exports = {
 
   logout: async (req, res, next) => {
     try {
-      req.session.destroy((err) => {
-        if (err) {
-          console.log(err);
-        }
-        res.redirect("/admin/login");
-      });
+      delete req.session.admin
+
+      res.redirect("/admin/login");
     } catch (error) {
       const err = new Error(error)
       err.statusCode = 500

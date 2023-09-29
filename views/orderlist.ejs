@@ -56,11 +56,18 @@
                     <div class="col-4 d-flex align-items-center">
                       <div class="text-center  justify-content-center align-items-center">
                         <p class="text-muted mb-2 small">
+                          
                           <% if (order.orderStatus === 'Delivered') { %>
-                              Delivered on: <%= new Date(order.orderDate.getTime() + 7 * 24 * 60 * 60 * 1000).toLocaleDateString() %>
-                          <% } else { %>
-                              Delivery date: <%= new Date(order.orderDate.getTime() + 7 * 24 * 60 * 60 * 1000).toLocaleDateString() %>
-                          <% } %>
+                            Delivered on: <%= order.changeDate.toLocaleDateString() %>
+                        <% } else if (order.orderStatus === 'Cancel Requested' || order.orderStatus === 'Cancelled') { %>
+                            Cancelled Date: <%= order.changeDate.toLocaleDateString() %>
+                        <% } else if (order.orderStatus === 'Return Requested') { %>
+                            Returned Date: <%= order.changeDate.toLocaleDateString() %>
+                        <% } else if (order.orderStatus === 'Order confirmed' || order.orderStatus === 'Shipping') { %>
+                          Delivery date: <%= new Date(order.orderDate.getTime() + 7 * 24 * 60 * 60 * 1000).toLocaleDateString() %>
+                        <% } else { %>
+                          Delivery date: <%= new Date(order.orderDate.getTime() + 7 * 24 * 60 * 60 * 1000).toLocaleDateString() %>
+                        <% } %>
                         </p>
                         <p class="text-muted mb-0 small">Total Amount: ₹<%= order.total %>.00</p>
                       </div>

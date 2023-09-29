@@ -350,7 +350,7 @@ module.exports = {
 
     forgotPassPage: async (req, res, next) => {
         try {
-            let User
+            let user
             const locals = {
                 title : 'Login',
                 error : '',
@@ -516,10 +516,12 @@ module.exports = {
             }
 
             if(gender){
+                filter.active = true,
                 filter.gender = gender
             }
 
             if(category){
+                filter.active = true,
                 filter.category = category
             }
 
@@ -547,7 +549,8 @@ module.exports = {
             } else if (number === '-1') {
                 sort = { MRP: -1 }; 
             }
-    
+            
+            console.log(filter);
             const productlist = await productData
                 .find(filter)
                 .sort(sort)
@@ -570,7 +573,7 @@ module.exports = {
 
             let user
             if(req.session.user){
-                const {email} = req.session.user
+                const email = req.session.user
                 user = await userData.findOne({ email : email})
             }
             const locals = {
@@ -619,7 +622,7 @@ module.exports = {
         try {
             let user
             if(req.session.user){
-                const {email} = req.session.user
+                const email = req.session.user
                 user = await userData.findOne({ email : email})
             }
             const {productId} = req.query;
@@ -733,7 +736,9 @@ module.exports = {
             // console.log(user);
             await user.cart.splice(index, 1);
             const productAdded = await user.save();
-            res.redirect('/cart')
+
+            const referringURL = req.get('referer');
+            res.redirect(referringURL);
 
         } catch (error) {
             const err = new Error(error)
@@ -810,26 +815,8 @@ module.exports = {
                     }
                 }
             );
-            // if(user.address.length === 0){
-            //     const user = await userData.findOneAndUpdate(
-            //         { email: email },
-            //         {
-            //             $set: {
-            //                 defaultAddress: {
-            //                     name: name,
-            //                     address: address,
-            //                     city: city,
-            //                     state: state,
-            //                     country: country, 
-            //                     pincode: pincode,
-            //                     mobileNumber: mobileNumber
-            //                 }
-            //             }
-            //         }
-            //     );
-            // }
-            // console.log(user);
-            res.redirect('/checkout');
+            const referringURL = req.get('referer');
+            res.redirect(referringURL);
         } catch (error) {
             const err = new Error(error)
             err.statusCode = 500
@@ -856,7 +843,8 @@ module.exports = {
                     [`address.${index}.pincode`]: pincode,
                     [`address.${index}.mobileNumber`]: mobileNumber,
                 }})
-                res.redirect('/cart')
+            const referringURL = req.get('referer');
+            res.redirect(referringURL);
         } catch (error) {
             const err = new Error(error)
             err.statusCode = 500
@@ -872,7 +860,9 @@ module.exports = {
             const user = await userData.findOne({_id:userId})
             user.address.splice(index,1);
             await user.save();
-            res.redirect('/checkout')
+
+            const referringURL = req.get('referer');
+            res.redirect(referringURL);
         } catch (error) {
             const err = new Error(error)
             err.statusCode = 500
@@ -888,7 +878,9 @@ module.exports = {
             const user = await userData.findOne({_id:userId})
             user.address.unshift(user.address.splice(index,1)[0]);
             await user.save();
-            res.redirect('/checkout')
+
+            const referringURL = req.get('referer');
+            res.redirect(referringURL);
 
         } catch (error) {
             const err = new Error(error)
@@ -1030,12 +1022,9 @@ module.exports = {
 
     logout : async (req, res, next) => {
         try {
-            req.session.destroy((err) => {
-                if (err) {
-                    console.log(err);
-                }
-                res.redirect('/login');
-            });
+            delete req.session.user
+
+            res.redirect('/login');
         } catch (error) {
             const err = new Error(error)
             err.statusCode = 500
@@ -1046,6 +1035,10 @@ module.exports = {
 
     OrderDetailsPage : async (req, res, next) => {
         try {
+            let user
+            if (req.session.user) {
+                user = await userData.findOne({ email: req.session.user });
+            }
             const {orderId} = req.query
             const orders = await orderData.findById(orderId).populate("products.product")
 
@@ -1057,7 +1050,7 @@ module.exports = {
                 subtotal += product.MRP * quantity;
             }
 
-            res.render('userSide/orderDetails',{orders,subtotal})
+            res.render('userSide/orderDetails',{orders,subtotal,user})
         } catch (error) {
             const err = new Error(error)
             err.statusCode = 500
