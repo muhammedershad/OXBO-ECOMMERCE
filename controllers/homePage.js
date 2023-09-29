@@ -120,7 +120,7 @@ module.exports = {
             if(req.query.message){
                 locals.error = req.query.message
             }
-            res.render('Login',locals);
+            res.render('login',locals);
 
         } catch (error) {
             const err = new Error(error)
