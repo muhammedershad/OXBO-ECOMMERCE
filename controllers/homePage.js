@@ -356,8 +356,12 @@ module.exports = {
                 error : '',
                 user
             }
+            if(req.query.message){
+                locals.error = req.query.message
+            }
             res.render('forgotPass',locals)
         } catch (error) {
+            console.log(error);
             const err = new Error(error)
             err.statusCode = 500
             err.error = 'Error in loading forgot password page.'
@@ -368,15 +372,24 @@ module.exports = {
     forgotPass : async (req, res, next) => {
         try {
             const {email} = req.body;
+
+            if (email === '') {
+                return res.redirect('/forgotpass?message=invalid_email')
+            }
+
+            if (!isValidEmail(email)) {
+                return res.redirect('/forgotpass?message=invalid_email')
+            }
+
             const user = await userData.findOne({email:email});
             if(!user){
-                return res.render('forgotpass',{error:'user_not_found'});
+                return res.redirect('/forgotpass?message=user_not_found');
             }
 
             req.session.formData = { email }
             await sendOTP(email);
             
-            await res.redirect('/forgotPassOTP')
+            return res.redirect('/forgotPassOTP')
 
         } catch (error) {
             const err = new Error(error)
@@ -394,6 +407,9 @@ module.exports = {
                 title : 'login',
                 user
             }
+            if(req.query.message){
+                locals.error = req.query.message
+            }
             res.render('forgotPassOTP',locals);
         } catch (error) {
             const err = new Error(error)
@@ -408,11 +424,15 @@ module.exports = {
         const userSession = req.session.formData;
 
         try {
+            if (enteredOTP.trim().length !== 6 || isNaN(enteredOTP)) {
+                return res.redirect('/forgotPassOTP?message=incorrect_otp');
+            }
+
             const user = await otpData.findOne({ email: userSession.email });
         
             if (!user) {
               console.log('User not found');
-              return res.render('forgotPassOTP',{error: 'user_not_found' })
+              return res.redirect('/forgotPassOTP?message=user_not_found')
             }
 
             // console.log(user);
@@ -431,13 +451,13 @@ module.exports = {
                     
                     await res.redirect('/changePass');
                 } else {
-                    return res.render('forgotPassOTP', { error: 'timeout_otp' });
+                    return res.redirect('/forgotPassOTP?message=timeout_otp');
                 }
     
             }else{
                 console.log('Entered OTP is incorrect');
                 // Redirect to the OTP page with an error message
-                res.render('forgotPassOTP', { error: 'incorrect_otp' });
+                return res.redirect('/forgotPassOTP?message=incorrect_otp');
             }
 
         } catch (error) {
@@ -550,7 +570,6 @@ module.exports = {
                 sort = { MRP: -1 }; 
             }
             
-            console.log(filter);
             const productlist = await productData
                 .find(filter)
                 .sort(sort)
@@ -737,8 +756,7 @@ module.exports = {
             await user.cart.splice(index, 1);
             const productAdded = await user.save();
 
-            const referringURL = req.get('referer');
-            res.redirect(referringURL);
+            return res.redirect('/cart')
 
         } catch (error) {
             const err = new Error(error)
@@ -1024,7 +1042,7 @@ module.exports = {
         try {
             delete req.session.user
 
-            res.redirect('/login');
+            return res.redirect('/login');
         } catch (error) {
             const err = new Error(error)
             err.statusCode = 500

@@ -64,6 +64,24 @@ function updateCartPrices(th,inputId, pricePerItem, productId){
 async function updateCart(userId,index){
     try {
         const response = await fetch(`/cart-remove-product?userId=${userId}&index=${index}`);
+        
+        if(response.ok){
+            Swal.fire({
+                text: 'Product removed from the cart',
+                target: '#custom-target',
+                customClass: {
+                  container: 'position-absolute'
+                },
+                toast: true,
+                position: 'bottom-right',
+                timer: 3000, // Close the toast after 2 seconds
+                showConfirmButton: false // Hide the "OK" button
+              });
+            setTimeout(() => {
+                window.location.reload();
+            }, 3000);
+        }
+        
     } catch (error) {
         console.log(error);
     }

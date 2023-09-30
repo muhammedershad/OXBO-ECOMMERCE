@@ -20,6 +20,11 @@ async function addToWishlist(productId) {
           timer: 2000, // Close the toast after 2 seconds
           showConfirmButton: false // Hide the "OK" button
         });
+
+        setTimeout(() => {
+            window.location.reload();
+        }, 3000);
+
         const data = await response.json();
         const productToast = document.getElementById('product-toast');
         const bootstrapToast = new bootstrap.Toast(productToast);
@@ -77,6 +82,9 @@ async function addToCart(productId){
                 timer: 2000, // Close the toast after 2 seconds
                 showConfirmButton: false // Hide the "OK" button
                 });
+                setTimeout(() => {
+                  window.location.reload();
+              }, 3000);
             } else {
                 // Handle the case where success is not true in the response, if needed.
                 console.log('Product not added to the cart');
