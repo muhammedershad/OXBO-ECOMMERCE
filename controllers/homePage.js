@@ -756,7 +756,8 @@ module.exports = {
             await user.cart.splice(index, 1);
             const productAdded = await user.save();
 
-            return res.redirect('/cart')
+            // return res.redirect('/cart')
+            return res.json({response : 'ok'})
 
         } catch (error) {
             const err = new Error(error)
@@ -1040,9 +1041,9 @@ module.exports = {
 
     logout : async (req, res, next) => {
         try {
-            delete req.session.user
+            req.session.destroy()
 
-            return res.redirect('/login');
+            return res.json({success : true})
         } catch (error) {
             const err = new Error(error)
             err.statusCode = 500

@@ -405,8 +405,10 @@
   function logout(){
     fetch(`/logout`,{
         method:"POST",
-    }).then(()=>{
+    }).then((response)=>{
+      if(response.ok){
         window.location.reload()
+      }
     })
   }
 </script>

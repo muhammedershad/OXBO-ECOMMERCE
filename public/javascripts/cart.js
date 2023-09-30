@@ -74,12 +74,10 @@ async function updateCart(userId,index){
                 },
                 toast: true,
                 position: 'bottom-right',
-                timer: 3000, // Close the toast after 2 seconds
+                timer: 2000, // Close the toast after 2 seconds
                 showConfirmButton: false // Hide the "OK" button
               });
-            setTimeout(() => {
-                window.location.reload();
-            }, 3000);
+            window.location.reload();
         }
         
     } catch (error) {
