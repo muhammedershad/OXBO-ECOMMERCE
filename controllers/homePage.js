@@ -11,13 +11,9 @@ const orderData = require('../models/orders')
 const couponData = require('../models/coupon')
 const RazorPay = require('razorpay');
 const bannerData = require('../models/banner');
-const PDFDocument = require('pdfkit');
-const puppeteer = require('puppeteer');
 const ejs = require('ejs');
 const path = require('path');
-const pdfkit = require('pdfkit');
 const fs = require('fs'); 
-const pdf = require('pdf-creator-node');
 
 
 
